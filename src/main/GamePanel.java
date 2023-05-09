@@ -78,7 +78,6 @@ public class GamePanel extends JPanel{
 
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        updateAnimationTick();
         g.drawImage(animation[animationIndex], (int) xDelta, (int) yDelta, 200, 200, getFocusCycleRootAncestor());
     }
 
@@ -95,6 +94,12 @@ public class GamePanel extends JPanel{
 
         }
            
+    }
+
+
+    public void updateGame() {
+        updateAnimationTick();
+
     }
 
 
