@@ -8,20 +8,21 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public class Player extends Entity{
+public class Player implements Entity{
     private int xPosition, yPosition;
     public Rectangle hitBox;
     public Collisions colliderCheck;
     public int xDifference = 65;
     public int yDifference = 35;
     private BufferedImage img;
-    private BufferedImage[] animation;
+    private BufferedImage[][] animation;
+    private int animationAction =0;
     private int animationIndex = 0;
     private int animationTick=0;
     private int animationSpeed = 3;
     public boolean velocityRight = false;
     public boolean velocityLeft = false;
-    public int gravityValue = 0;
+    public int gravityValue = 8;
     public boolean inAir = true;
 
     private int gravityTick=0;
@@ -39,9 +40,10 @@ public class Player extends Entity{
     }
 
     public void loadAnimation() {
-        animation = new BufferedImage[4];
-        for(int i = 0; i<animation.length; i++){
-            animation[i] = img.getSubimage(i*100, 0, 100, 100);
+        animation = new BufferedImage[1][4];
+        for(int i = 0; i<animation[animationAction].length; i++){
+            animation[animationAction][i] = img.getSubimage(i*100, 0, 100, 100);
+            //System.out.println(animationAction + "+" + i);
         }
     }
 
@@ -58,7 +60,19 @@ public class Player extends Entity{
         inAir = status;
     }
 
-    public void updateAnimationTick() {
+    public boolean getInAir(){
+        return inAir;
+    }
+
+    public void updateAnimation(){
+        animationIndex++;
+        if(animationIndex>=animation[animationAction].length)
+            {
+                animationIndex = 0;
+            } 
+    }
+
+   /* public void updateAnimationTick() {
         animationTick++;
         if(animationTick >= animationSpeed){
             animationIndex++;
@@ -68,23 +82,40 @@ public class Player extends Entity{
                 animationIndex = 0;
             }
         } 
-    }
+    } */
 
-    public void updateGravityTick() {
+    /*public void updateGravityTick() {
         gravityTick++;
         if(inAir){
             if(gravityTick >= gravitySpeed){
                 gravityTick = 0;
                 if(velocityRight)
-                    movePosition(10, gravityValue);
+                    movePosition(7, gravityValue);
                 else if(velocityLeft)
-                    movePosition(-10, gravityValue);
+                    movePosition(-7, gravityValue);
                 else
                     movePosition(0, gravityValue);
-                System.out.println(gravityValue);
+                //System.out.println(gravityValue);
                 gravityValue++;
             } 
         }
+    }*/
+
+    public void updateGravityValue(){
+        if(velocityRight)
+            movePosition(7, gravityValue);
+        else if(velocityLeft)
+            movePosition(-7, gravityValue);
+        else
+            movePosition(0, gravityValue);
+        //System.out.println(gravityValue);
+        gravityValue++;
+    }
+
+
+
+    public int getHitBoxY(){
+        return hitBox.y;
     }
 
     public void jump(){
@@ -96,15 +127,13 @@ public class Player extends Entity{
     } 
 
     public BufferedImage getAnimation(){
-        return animation[animationIndex];
+       // System.out.println(animationIndex);
+        return animation[animationAction][animationIndex];
     }
 
 
     public void movePosition(int xNum, int yNum){ 
        colliderCheck.moveTo(this, xNum, yNum); // sends the amount the player wants to move which will then update it depending on where it can move
-       if(xNum != 0){
-           updateAnimationTick(); //since he is moving to the left or right, this updates the animation
-       }
     }
 
     public int getXPosition(){
@@ -123,6 +152,7 @@ public class Player extends Entity{
     }
 
     public void setXPosition(int newX){
+        animationAction = 0;
         xPosition = newX;
         hitBox.x = xPosition + xDifference;
     }

@@ -30,12 +30,12 @@ public class KeyBoardInputs implements KeyListener{
         player.velocityRight = false;
         switch(e.getKeyCode()){
         case KeyEvent.VK_W: case KeyEvent.VK_UP:
-            player.movePosition(0,-5); //move up
+            player.jump(); //move up
             break;
         case KeyEvent.VK_A: case KeyEvent.VK_LEFT:
             left = true; //set left to true, incase space bar is also pressed
             if(spaceBar){
-                player.jump();
+                player.jump(); //passing jump the xy direction prevents the player from moving left/right in the way
                 player.velocityLeft = true; //setting velocity to left true so that the player falls at an angle to the left
             }
             player.movePosition(-20,0); 
@@ -54,11 +54,11 @@ public class KeyBoardInputs implements KeyListener{
         case KeyEvent.VK_SPACE:
             spaceBar = true;
             if(right){
-                player.movePosition(15,0);
+                player.movePosition(5,0);
                 player.velocityRight = true;
             }
             else if(left){
-                player.movePosition(-15,0);
+                player.movePosition(-5,0);
                 player.velocityLeft = true;
             }
                 player.jump();
@@ -72,10 +72,10 @@ public class KeyBoardInputs implements KeyListener{
             case KeyEvent.VK_SPACE:
                 spaceBar = false; //makes sure the variable is only true when space bar is held
                 break;
-            case KeyEvent.VK_RIGHT:
+            case KeyEvent.VK_D: case KeyEvent.VK_RIGHT:
                 right = false;
                 break;
-            case KeyEvent.VK_LEFT:
+            case KeyEvent.VK_A: case KeyEvent.VK_LEFT:
                 left = false;
                 break;
         }
