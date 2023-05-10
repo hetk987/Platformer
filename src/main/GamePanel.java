@@ -1,88 +1,90 @@
 package main;
 
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
-import inputs.KeyBoardInputs;
-import inputs.MouseInputs;
-
-import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.awt.Dimension;
+
+import Entities.*;
 
 public class GamePanel extends JPanel{
 
-    private MouseInputs mouseInputs;
-    private float xDelta = 100, yDelta = 100;
-    private BufferedImage img;
-    private BufferedImage[] animation;
-    private int animationIndex = 0;
+    public ArrayList<Entity> entitiesList;
+    public Surroundings surroundingsTest;
     private int animationTick=0;
-    private int animationSpeed = 20;
+    private int animationSpeed = 30;
+    private int gravityTick=0;
+    private int gravitySpeed = 5;
+    Entity currentEntity;
 
     public GamePanel(){
-
-        importImage();
-        loadAnimation();
-
-
-        mouseInputs = new MouseInputs(this);
-        addKeyListener(new KeyBoardInputs(this));
-        addMouseListener(mouseInputs);
-        addMouseMotionListener(mouseInputs);
+        entitiesList = new ArrayList<Entity>();
         setPanelSize();
     }
-    
 
-    private void loadAnimation() {
-        animation = new BufferedImage[4];
-        for(int i = 0; i<animation.length; i++){
-            animation[i] = img.getSubimage(i*100, 0, 100, 100);
-        }
-
-    }
-
-
-    private void importImage() {
-        
-        
-        try {
-            img = ImageIO.read(new FileInputStream("res/diverSpriteAtlas.png"));
-        } catch (IOException e) {
-            System.out.println("Reading Image Error");
-            e.printStackTrace();
-        }
-        
-    }
-
-
-    private void setPanelSize() {
+    public void setPanelSize(){
         setPreferredSize(new Dimension(1500, 900));
     }
 
-
-    //Changes the position when WASD or Arrows are used
-    public void changeXDelta(int num){
-        this.xDelta+=num;
-        repaint();
+    public void setBackGround(Surroundings surroundings){
+        surroundingsTest = surroundings;
     }
 
-    public void changeYDelta(int num){
-        this.yDelta+=num;
-        repaint();
+    public void addEntity(Entity e){
+        entitiesList.add(e);
     }
 
-    //Sets the position on the object to the position of the mouse
+    public int getNumberOfEntities(){
+        return entitiesList.size();
+    }
 
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        g.drawImage(animation[animationIndex], (int) xDelta, (int) yDelta, 200, 200, getFocusCycleRootAncestor());
+
+        updateSurroundings(g);
+        updateEntities(g);
+    }
+
+    public void updateEntities(Graphics g){
+        for(Entity currentEntity: entitiesList){ //loop through each entity
+            currentEntity.setAnimation();
+           // g.drawRect(currentEntity.getHitBox().x, currentEntity.getHitBox().y, currentEntity.getHitBox().width, currentEntity.getHitBox().height); //draw hit box
+            g.drawImage(currentEntity.getAnimation(), currentEntity.getXPosition(), currentEntity.getYPosition(), 200, 200, getFocusCycleRootAncestor()); //draw entity
+        }
     }
 
 
-    private void updateAnimationTick() {
+    public void updateAnimationTick(){
+        animationTick++;
+        if(animationTick >= animationSpeed){
+            animationTick=0;
+            for(Entity currentEntity: entitiesList){ 
+                currentEntity.updateAnimation();
+            }
+        } 
+    }
+
+    public void updateGravityTick(){
+        gravityTick++;
+        if(gravityTick >= gravitySpeed){
+            gravityTick = 0;
+            for(Entity currentEntity: entitiesList){ 
+                if(currentEntity.getInAir()){
+                    for(int i=0; i<entitiesList.size(); i++){ 
+                        currentEntity = entitiesList.get(i);
+                        currentEntity.updateGravityValue(); 
+                    }
+                }
+            }
+        }
+    }
+
+    public void updateGame(){
+        updateAnimationTick();
+        updateGravityTick();
+    }
+
+    /* public void updateAnimationTick() {
         animationTick++;
         if(animationTick >= animationSpeed){
             animationIndex++;
@@ -91,15 +93,11 @@ public class GamePanel extends JPanel{
             {
                 animationIndex = 0;
             }
+        } 
+    } */
 
-        }
-           
-    }
-
-
-    public void updateGame() {
-        updateAnimationTick();
-
+    public void updateSurroundings(Graphics g){
+        g.drawImage(surroundingsTest.getAnimation(), 300, 500, 450, 300, getFocusCycleRootAncestor()); //draw hit box
     }
 
 
