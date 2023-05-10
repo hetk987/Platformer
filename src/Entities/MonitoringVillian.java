@@ -13,7 +13,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public class MonitoringVillian implements Entity{
+public class MonitoringVillian extends Entity{
     public int xPosition, yPosition, rightBound, leftBound;
     public boolean rightDirection;
     public Rectangle hitBox;
@@ -22,11 +22,10 @@ public class MonitoringVillian implements Entity{
     public int yDifference = -10;
     private static Timer timer;
     private BufferedImage img;
-    private BufferedImage[][] animation;
+    private BufferedImage[] animation;
     private int animationIndex = 0;
     private int animationTick=0;
     private int animationSpeed = 20;
-    private int animationAction = 0;
     public boolean inAir = false;
 
     public MonitoringVillian(int xpos, int ypos, int rightBound, int leftBound, Collisions c){
@@ -40,9 +39,9 @@ public class MonitoringVillian implements Entity{
     }
 
     public void loadAnimation() {
-        animation = new BufferedImage[4][1];
+        animation = new BufferedImage[4];
         for(int i = 0; i<animation.length; i++){
-            animation[i][animationAction] = img.getSubimage(i*100, 0, 100, 100);
+            animation[i] = img.getSubimage(i*100, 0, 100, 100);
         }
     }
 
@@ -55,7 +54,7 @@ public class MonitoringVillian implements Entity{
         }
     }
 
-    /*public void updateAnimationTick() {
+    public void updateAnimationTick() {
         animationTick++;
         if(animationTick >= animationSpeed){
             animationIndex++;
@@ -65,18 +64,10 @@ public class MonitoringVillian implements Entity{
                 animationIndex = 0;
             }
         } 
-    }*/
-
-    public void updateAnimation(){
-        animationIndex++;
-        if(animationIndex>=animation.length)
-            {
-                animationIndex = 0;
-            }
-    } 
+    }
 
     public BufferedImage getAnimation(){
-        return animation[animationIndex][animationAction];
+        return animation[animationIndex];
     }
 
     public void movePosition(int xNum, int yNum){
@@ -131,18 +122,6 @@ public class MonitoringVillian implements Entity{
     }
 
     public void setInAir(boolean b){
-
-    }
-
-    public int getHitBoxY(){
-        return 0;
-    }
-
-    public boolean getInAir(){
-        return false;
-    }
-
-    public void updateGravityValue(){
 
     }
     

@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import Physics.*;
 
 
-public class Surroundings implements Entity{
+public class Surroundings extends Entity{
 
     private BufferedImage img;
     public Rectangle hitBox;
@@ -17,12 +17,12 @@ public class Surroundings implements Entity{
     public int xPosition = 300;
     public int yPosition = 500;
     public int xDifference = 50;
-    public int yDifference = 115;
+    public int yDifference = 113;
     public boolean inAir = false;
     
     public Surroundings(Collisions c){
         importImage();
-        hitBox = new Rectangle(xPosition + xDifference, yPosition + yDifference, 350, 71);
+        hitBox = new Rectangle(xPosition + xDifference, yPosition + yDifference, 350, 73);
         colliderCheck = c;
         colliderCheck.addEntity(this);
     }
@@ -48,7 +48,7 @@ public class Surroundings implements Entity{
         //updateAnimationTick();
     }
 
-    public Rectangle getHitBox(){
+    public Rectangle getRectangle(){
         return hitBox;
     }
 
@@ -81,23 +81,13 @@ public class Surroundings implements Entity{
     public void updateAnimationTick(){
 
     }
+    public Rectangle getHitBox(){
+        return hitBox;
+    }
+
     public void setInAir(boolean b){
 
     }
-    public int getHitBoxY(){
-        return 0;
-    }
 
-    public void updateAnimation(){
-
-    }
-
-    public boolean getInAir(){
-        return false;
-    }
-
-    public void updateGravityValue(){
-        
-    }
 
 }

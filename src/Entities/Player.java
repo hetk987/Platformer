@@ -2,27 +2,27 @@ package Entities;
 
 import java.awt.Rectangle;
 import Physics.*;
+import Utilz.LoadSave;
 
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public class Player implements Entity{
+public class Player extends Entity{
     private int xPosition, yPosition;
     public Rectangle hitBox;
     public Collisions colliderCheck;
     public int xDifference = 65;
     public int yDifference = 35;
     private BufferedImage img;
-    private BufferedImage[][] animation;
-    private int animationAction =0;
+    private BufferedImage[] animation;
     private int animationIndex = 0;
     private int animationTick=0;
     private int animationSpeed = 3;
     public boolean velocityRight = false;
     public boolean velocityLeft = false;
-    public int gravityValue = 8;
+    public int gravityValue = 0;
     public boolean inAir = true;
 
     private int gravityTick=0;
@@ -40,39 +40,21 @@ public class Player implements Entity{
     }
 
     public void loadAnimation() {
-        animation = new BufferedImage[1][4];
-        for(int i = 0; i<animation[animationAction].length; i++){
-            animation[animationAction][i] = img.getSubimage(i*100, 0, 100, 100);
-            //System.out.println(animationAction + "+" + i);
+        animation = new BufferedImage[4];
+        for(int i = 0; i<animation.length; i++){
+            animation[i] = img.getSubimage(i*100, 0, 100, 100);
         }
     }
 
     public void importImage() {
-        try {
-            img = ImageIO.read(new FileInputStream("res/diverSpriteAtlas.png"));
-        } catch (IOException e) {
-            System.out.println("Reading Image Error");
-            e.printStackTrace();
-        }
+        img = LoadSave.getSpriteAtlas(LoadSave.PLAYER_ATLAS);
     }
 
     public void setInAir(boolean status){
         inAir = status;
     }
 
-    public boolean getInAir(){
-        return inAir;
-    }
-
-    public void updateAnimation(){
-        animationIndex++;
-        if(animationIndex>=animation[animationAction].length)
-            {
-                animationIndex = 0;
-            } 
-    }
-
-   /* public void updateAnimationTick() {
+    public void updateAnimationTick() {
         animationTick++;
         if(animationTick >= animationSpeed){
             animationIndex++;
@@ -82,40 +64,23 @@ public class Player implements Entity{
                 animationIndex = 0;
             }
         } 
-    } */
+    }
 
-    /*public void updateGravityTick() {
+    public void updateGravityTick() {
         gravityTick++;
         if(inAir){
             if(gravityTick >= gravitySpeed){
                 gravityTick = 0;
                 if(velocityRight)
-                    movePosition(7, gravityValue);
+                    movePosition(10, gravityValue);
                 else if(velocityLeft)
-                    movePosition(-7, gravityValue);
+                    movePosition(-10, gravityValue);
                 else
                     movePosition(0, gravityValue);
-                //System.out.println(gravityValue);
+                System.out.println(gravityValue);
                 gravityValue++;
             } 
         }
-    }*/
-
-    public void updateGravityValue(){
-        if(velocityRight)
-            movePosition(7, gravityValue);
-        else if(velocityLeft)
-            movePosition(-7, gravityValue);
-        else
-            movePosition(0, gravityValue);
-        //System.out.println(gravityValue);
-        gravityValue++;
-    }
-
-
-
-    public int getHitBoxY(){
-        return hitBox.y;
     }
 
     public void jump(){
@@ -127,13 +92,15 @@ public class Player implements Entity{
     } 
 
     public BufferedImage getAnimation(){
-       // System.out.println(animationIndex);
-        return animation[animationAction][animationIndex];
+        return animation[animationIndex];
     }
 
 
     public void movePosition(int xNum, int yNum){ 
        colliderCheck.moveTo(this, xNum, yNum); // sends the amount the player wants to move which will then update it depending on where it can move
+       if(xNum != 0){
+           updateAnimationTick(); //since he is moving to the left or right, this updates the animation
+       }
     }
 
     public int getXPosition(){
@@ -152,7 +119,6 @@ public class Player implements Entity{
     }
 
     public void setXPosition(int newX){
-        animationAction = 0;
         xPosition = newX;
         hitBox.x = xPosition + xDifference;
     }
