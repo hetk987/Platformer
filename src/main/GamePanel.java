@@ -1,44 +1,52 @@
 package main;
 
 import javax.swing.JPanel;
-
-import inputs.KeyBoardInputs;
-import inputs.MouseInputs;
-
-import java.awt.Color;
 import java.awt.Graphics;
-import java.util.Random;
+import java.util.ArrayList;
 
+import Entities.*;
+import Physics.*;
 
 public class GamePanel extends JPanel{
 
-    private MouseInputs mouseInputs;
-    private float xDelta = 100, yDelta = 100;
+    public ArrayList<Entity> entitiesList;
+    public Surroundings surroundingsTest;
+    Entity currentEntity;
 
     public GamePanel(){
-
-        mouseInputs = new MouseInputs(this);
-        addKeyListener(new KeyBoardInputs(this));
-        addMouseListener(mouseInputs);
-        addMouseMotionListener(mouseInputs);
+        entitiesList = new ArrayList<Entity>();
     }
 
-    //Changes the position when WASD or Arrows are used
-    public void changeXDelta(int num){
-        this.xDelta+=num;
-        repaint();
+    public void setBackGround(Surroundings surroundings){
+        surroundingsTest = surroundings;
     }
 
-    public void changeYDelta(int num){
-        this.yDelta+=num;
-        repaint();
+    public void addEntity(Entity e){
+        entitiesList.add(e);
     }
 
-    //Sets the position on the object to the position of the mouse
+    public int getNumberOfEntities(){
+        return entitiesList.size();
+    }
 
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        repaint();
+        updateEntities(g);
+        updateSurroundings(g);
+    }
+
+    public void updateEntities(Graphics g){
+        for(int i=0; i<entitiesList.size(); i++){ //loop through each entity
+            currentEntity = entitiesList.get(i); 
+            currentEntity.updateGravityTick(); //update gravity effects
+            g.drawRect(currentEntity.getHitBox().x, currentEntity.getHitBox().y, currentEntity.getHitBox().width, currentEntity.getHitBox().height); //draw hit box
+            g.drawImage(currentEntity.getAnimation(), currentEntity.getXPosition(), currentEntity.getYPosition(), 200, 200, getFocusCycleRootAncestor()); //draw entity
+        }
+    }
+
+    public void updateSurroundings(Graphics g){
+        g.drawImage(surroundingsTest.getAnimation(), 300, 500, 450, 300, getFocusCycleRootAncestor()); //draw hit box
+        g.drawRect(surroundingsTest.getRectangle().x, surroundingsTest.getRectangle().y, surroundingsTest.getRectangle().width, surroundingsTest.getRectangle().height); //draw surroundings
     }
 
 
