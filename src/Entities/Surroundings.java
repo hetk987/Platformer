@@ -60,9 +60,7 @@ public class Surroundings implements Entity{
         return yDifference;
     }
 
-    public void updateEntity(){
 
-    }
     public void movePosition(int x, int y){
 
     }

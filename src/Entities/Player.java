@@ -13,23 +13,28 @@ import static utilz.Constants.PlayerConstants.*;
 import static utilz.Constants.Directions.*;
 
 public class Player implements Entity{
+    //Instance for logic
     private int xPosition, yPosition;
     public Rectangle hitBox;
     public Collisions colliderCheck;
     private int xDifference = 65;
     private int yDifference = 35;
+
     private BufferedImage img;
     private BufferedImage[][] animation;
-    private int animationIndex = 0;
     public boolean velocityRight = false;
     public boolean velocityLeft = false;
-    public int gravityValue = 10;
+    public int gravityValue = 0;
     public boolean inAir = true;
+
+    //Used to change Animation
+    private int animationIndex = 0;
     private int playerAction = PlayerConstants.IDLE_RIGHT;
     private int playerDirection = -1;
     private boolean moving;
     private boolean jump;
 
+    //Constructor
     public Player(int x, int y,  Collisions c){
         xPosition = x;
         yPosition = y;
@@ -41,6 +46,7 @@ public class Player implements Entity{
         loadAnimation();
     }
 
+    //Loads the image into the buffered Image as a 2D array to then use for rendering. 
     public void loadAnimation() {
         animation = new BufferedImage[6][7];
         for(int j = 0; j<animation.length;j++)
@@ -84,8 +90,6 @@ public class Player implements Entity{
         gravityValue++;
     }
 
-
-
     public int getHitBoxY(){
         return hitBox.y;
     }
@@ -94,8 +98,7 @@ public class Player implements Entity{
         jump = true;
         if(!inAir){
             inAir = true;
-            gravityValue = -8; //start of gravity vallue
-            colliderCheck.moveTo(this, 0, -10); //jump
+            gravityValue = -20; //start of gravity vallue
         }
     } 
 
@@ -106,7 +109,6 @@ public class Player implements Entity{
 
     public void setDirection(int direction){
         playerDirection = direction;
-        moving = true;
     }
 
     public void setMoving(boolean moving){
@@ -150,16 +152,12 @@ public class Player implements Entity{
         return hitBox;
     }
 
-
-    public void updateEntity(){
-
-    }
-
-    public void setAnimationIndex(){
+    public void resetAnimationIndex(String lastPressed, String pressed){
+        if(lastPressed.equals(pressed))
+            return;
         animationIndex = 0;
     }
 
-    @Override
     public void setAnimation() {
         if(moving){
             if(jump){
@@ -187,9 +185,13 @@ public class Player implements Entity{
             }
         }
         else
-            playerAction = IDLE_RIGHT;
+            switch(playerDirection){
+                case LEFT:
+                    playerAction = IDLE_LEFT;
+                    break;
+                case RIGHT:
+                    playerAction = IDLE_RIGHT;
+                    break;
+        }
     }
-
-
-
 }
