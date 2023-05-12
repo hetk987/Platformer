@@ -11,7 +11,6 @@ public interface Entity {
     public abstract int getYPosition();
     public abstract void setXPosition(int x);
     public abstract void setYPosition(int y);
-    public abstract int getHitBoxY();
     public abstract BufferedImage getAnimation();
     public abstract Rectangle getHitBox();
     public abstract int getXDifference();
@@ -20,4 +19,5 @@ public interface Entity {
     public abstract boolean getInAir();
     public abstract void updateGravityValue();
     public void updateAnimation();
+    public abstract void setAnimation();
 }

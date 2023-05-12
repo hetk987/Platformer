@@ -2,31 +2,33 @@ package Entities;
 
 import java.awt.Rectangle;
 import Physics.*;
+import utilz.Constants.PlayerConstants;
 
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
+import static utilz.Constants.PlayerConstants.*;
+import static utilz.Constants.Directions.*;
+
 public class Player implements Entity{
     private int xPosition, yPosition;
     public Rectangle hitBox;
     public Collisions colliderCheck;
-    public int xDifference = 65;
-    public int yDifference = 35;
+    private int xDifference = 65;
+    private int yDifference = 35;
     private BufferedImage img;
     private BufferedImage[][] animation;
-    private int animationAction =0;
     private int animationIndex = 0;
-    private int animationTick=0;
-    private int animationSpeed = 3;
     public boolean velocityRight = false;
     public boolean velocityLeft = false;
-    public int gravityValue = 8;
+    public int gravityValue = 0;
     public boolean inAir = true;
-
-    private int gravityTick=0;
-    private int gravitySpeed = 8;
+    private int playerAction = PlayerConstants.IDLE_RIGHT;
+    private int playerDirection = -1;
+    private boolean moving;
+    private boolean jump;
 
     public Player(int x, int y,  Collisions c){
         xPosition = x;
@@ -34,17 +36,16 @@ public class Player implements Entity{
         hitBox = new Rectangle(xPosition + xDifference, yPosition + yDifference, 70, 120);
         colliderCheck = c;
         colliderCheck.addEntity(this);
-
         importImage();
         loadAnimation();
     }
 
     public void loadAnimation() {
-        animation = new BufferedImage[1][4];
-        for(int i = 0; i<animation[animationAction].length; i++){
-            animation[animationAction][i] = img.getSubimage(i*100, 0, 100, 100);
-            //System.out.println(animationAction + "+" + i);
-        }
+        animation = new BufferedImage[6][7];
+        for(int j = 0; j<animation.length;j++)
+            for(int i = 0; i<animation[j].length; i++){
+                animation[j][i] = img.getSubimage(i*200, j*200, 200, 200);
+            }
     }
 
     public void importImage() {
@@ -66,71 +67,52 @@ public class Player implements Entity{
 
     public void updateAnimation(){
         animationIndex++;
-        if(animationIndex>=animation[animationAction].length)
-            {
+        if(animationIndex>= GetSpriteAmount(playerAction))
                 animationIndex = 0;
-            } 
     }
 
-   /* public void updateAnimationTick() {
-        animationTick++;
-        if(animationTick >= animationSpeed){
-            animationIndex++;
-            animationTick = 0;
-            if(animationIndex>=animation.length)
-            {
-                animationIndex = 0;
-            }
-        } 
-    } */
-
-    /*public void updateGravityTick() {
-        gravityTick++;
-        if(inAir){
-            if(gravityTick >= gravitySpeed){
-                gravityTick = 0;
-                if(velocityRight)
-                    movePosition(7, gravityValue);
-                else if(velocityLeft)
-                    movePosition(-7, gravityValue);
-                else
-                    movePosition(0, gravityValue);
-                //System.out.println(gravityValue);
-                gravityValue++;
-            } 
-        }
-    }*/
 
     public void updateGravityValue(){
-        if(velocityRight)
-            movePosition(7, gravityValue);
-        else if(velocityLeft)
-            movePosition(-7, gravityValue);
-        else
-            movePosition(0, gravityValue);
-        //System.out.println(gravityValue);
+        if(gravityValue != 0){
+            int toIncrement = gravityValue/(Math.abs(gravityValue));
+            if(velocityRight)
+                movePosition(7, 0);
+            else if(velocityLeft)
+                movePosition(-7, 0);
+            else
+                movePosition(0, 0);
+        for(int i=0; i<Math.abs(gravityValue); i++){
+            movePosition(0, toIncrement);
+            }
+        }
         gravityValue++;
     }
 
-
-
-    public int getHitBoxY(){
-        return hitBox.y;
-    }
-
+ 
     public void jump(){
+        jump = true;
         if(!inAir){
             inAir = true;
-            gravityValue = -8; //start of gravity vallue
-            colliderCheck.moveTo(this, 0, -10); //jump
+            gravityValue = -25; //start of gravity vallue
         }
     } 
 
     public BufferedImage getAnimation(){
-       // System.out.println(animationIndex);
-        return animation[animationAction][animationIndex];
+        return animation[playerAction][animationIndex];
     }
 
+    public void setDirection(int direction){
+        playerDirection = direction;
+        moving = true;
+    }
+
+    public void setMoving(boolean moving){
+        this.moving = moving;   
+    }
+
+    public void setJump(boolean jump){
+        this.jump = jump;
+    }
 
     public void movePosition(int xNum, int yNum){ 
        colliderCheck.moveTo(this, xNum, yNum); // sends the amount the player wants to move which will then update it depending on where it can move
@@ -152,7 +134,6 @@ public class Player implements Entity{
     }
 
     public void setXPosition(int newX){
-        animationAction = 0;
         xPosition = newX;
         hitBox.x = xPosition + xDifference;
     }
@@ -171,8 +152,41 @@ public class Player implements Entity{
 
     }
 
-    
-    
+    public void setAnimationIndex(){
+        animationIndex = 0;
+    }
+
+    @Override
+    public void setAnimation() {
+        if(moving){
+            if(jump){
+                switch(playerDirection){
+                    case LEFT:
+                        playerAction = JUMPING_LEFT;
+                        movePosition(-1, 0);
+                        break;
+                    case RIGHT:
+                        playerAction = JUMPING_RIGHT;
+                        movePosition(1, 0);
+                        break;
+                }
+            }
+            else
+                switch(playerDirection){
+                    case LEFT:
+                        playerAction = RUNNING_LEFT;
+                        movePosition(-1, 0);
+                        break;
+                    case RIGHT:
+                        playerAction = RUNNING_RIGHT;
+                        movePosition(1, 0);
+                        break;
+            }
+        }
+        else
+            playerAction = IDLE_RIGHT;
+    }
+
 
 
 }

@@ -11,6 +11,7 @@ public class GamePanel extends JPanel{
 
     public ArrayList<Entity> entitiesList;
     public Surroundings surroundingsTest;
+    public Surroundings2 surroundingsTest2;
     private int animationTick=0;
     private int animationSpeed = 30;
     private int gravityTick=0;
@@ -23,11 +24,12 @@ public class GamePanel extends JPanel{
     }
 
     public void setPanelSize(){
-        setPreferredSize(new Dimension(1500, 800));
+        setPreferredSize(new Dimension(1500, 900));
     }
 
-    public void setBackGround(Surroundings surroundings){
+    public void setBackGround(Surroundings surroundings, Surroundings2 surroundings2){
         surroundingsTest = surroundings;
+        surroundingsTest2 = surroundings2;
     }
 
     public void addEntity(Entity e){
@@ -40,16 +42,19 @@ public class GamePanel extends JPanel{
 
     public void paintComponent(Graphics g){
         super.paintComponent(g);
+
         updateSurroundings(g);
         updateEntities(g);
     }
 
     public void updateEntities(Graphics g){
         for(Entity currentEntity: entitiesList){ //loop through each entity
-           // g.drawRect(currentEntity.getHitBox().x, currentEntity.getHitBox().y, currentEntity.getHitBox().width, currentEntity.getHitBox().height); //draw hit box
+            currentEntity.setAnimation();
+            g.drawRect(currentEntity.getHitBox().x, currentEntity.getHitBox().y, currentEntity.getHitBox().width, currentEntity.getHitBox().height); //draw hit box
             g.drawImage(currentEntity.getAnimation(), currentEntity.getXPosition(), currentEntity.getYPosition(), 200, 200, getFocusCycleRootAncestor()); //draw entity
         }
     }
+
 
     public void updateAnimationTick(){
         animationTick++;
@@ -82,10 +87,10 @@ public class GamePanel extends JPanel{
     }
 
     public void updateSurroundings(Graphics g){
+        g.drawRect(surroundingsTest.getHitBox().x, surroundingsTest.getHitBox().y, surroundingsTest.getHitBox().width, surroundingsTest.getHitBox().height); //draw hit box
         g.drawImage(surroundingsTest.getAnimation(), 300, 500, 450, 300, getFocusCycleRootAncestor()); //draw hit box
-        g.drawRect(surroundingsTest.getHitBox().x, surroundingsTest.getHitBox().y, surroundingsTest.getHitBox().width, surroundingsTest.getHitBox().height); //draw surroundings
+        g.drawRect(surroundingsTest2.getHitBox().x, surroundingsTest2.getHitBox().y, surroundingsTest2.getHitBox().width, surroundingsTest.getHitBox().height); //draw hit box
+        g.drawImage(surroundingsTest2.getAnimation(), surroundingsTest2.getXPosition(), surroundingsTest2.getYPosition(), 450, 300, getFocusCycleRootAncestor()); //draw hit box
     }
-
-
-    
+ 
 }
