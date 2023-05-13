@@ -1,10 +1,7 @@
 package main;
 
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -12,8 +9,6 @@ import static main.Game.GAME_WIDTH;
 import static main.Game.GAME_HEIGHT;
 import Entities.*;
 import Levels.LevelManager;
-import Physics.*;
-import utilz.LoadSave;
 
 public class GamePanel extends JPanel{
 
@@ -76,19 +71,28 @@ public class GamePanel extends JPanel{
 
     public void updateEntities(Graphics g){
         for(Entity currentEntity: entitiesList){ //loop through each entity
-            currentEntity.setAnimation();
-            //g.drawRect(currentEntity.getHitBox().x, currentEntity.getHitBox().y, currentEntity.getHitBox().width, currentEntity.getHitBox().height); //draw hit box
-            g.drawImage(currentEntity.getAnimation(), currentEntity.getXPosition(), currentEntity.getYPosition(), 75, 75, getFocusCycleRootAncestor()); //draw entity
+            if(currentEntity instanceof Player){
+                currentEntity.setAnimation();
+                g.drawRect(currentEntity.getHitBox().x, currentEntity.getHitBox().y, currentEntity.getHitBox().width, currentEntity.getHitBox().height); //draw hit box
+                g.drawImage(currentEntity.getAnimation(), currentEntity.getXPosition(), currentEntity.getYPosition(), 75, 75, getFocusCycleRootAncestor()); //draw entity
+            }
+            else{
+                currentEntity.setAnimation();
+                g.drawRect(currentEntity.getHitBox().x, currentEntity.getHitBox().y, currentEntity.getHitBox().width, currentEntity.getHitBox().height); //draw hit box
+                g.drawImage(currentEntity.getAnimation(), currentEntity.getXPosition(), currentEntity.getYPosition(), 70, 70, getFocusCycleRootAncestor()); //draw entity
+                ((MonitoringVillian) currentEntity).updateEntity();
+            }
+            
         }
     }
 
     public void updateSurroundings(Graphics g){
         //g.drawImage(surroundingsTest.getAnimation(), 100, 500, 450, 300, getFocusCycleRootAncestor()); //draw hit box
-         g.drawRect(surroundings1.getRectangle().x, surroundings1.getRectangle().y, surroundings1.getRectangle().width, surroundings1.getRectangle().height); //draw surroundings
-         g.drawRect(surroundings2.getRectangle().x, surroundings2.getRectangle().y, surroundings2.getRectangle().width, surroundings2.getRectangle().height);
-         g.drawRect(surroundings3.getRectangle().x, surroundings3.getRectangle().y, surroundings3.getRectangle().width, surroundings3.getRectangle().height);
-        g.drawRect(surroundings4.getRectangle().x, surroundings4.getRectangle().y, surroundings4.getRectangle().width, surroundings4.getRectangle().height);
-         g.drawRect(surroundings5.getRectangle().x, surroundings5.getRectangle().y, surroundings5.getRectangle().width, surroundings5.getRectangle().height);
+        //  g.drawRect(surroundings1.getRectangle().x, surroundings1.getRectangle().y, surroundings1.getRectangle().width, surroundings1.getRectangle().height); //draw surroundings
+        //  g.drawRect(surroundings2.getRectangle().x, surroundings2.getRectangle().y, surroundings2.getRectangle().width, surroundings2.getRectangle().height);
+        //  g.drawRect(surroundings3.getRectangle().x, surroundings3.getRectangle().y, surroundings3.getRectangle().width, surroundings3.getRectangle().height);
+        // g.drawRect(surroundings4.getRectangle().x, surroundings4.getRectangle().y, surroundings4.getRectangle().width, surroundings4.getRectangle().height);
+        //  g.drawRect(surroundings5.getRectangle().x, surroundings5.getRectangle().y, surroundings5.getRectangle().width, surroundings5.getRectangle().height);
         // g.drawRect(surroundings6.getRectangle().x, surroundings6.getRectangle().y, surroundings6.getRectangle().width, surroundings6.getRectangle().height);
         // g.drawRect(surroundings7.getRectangle().x, surroundings7.getRectangle().y, surroundings7.getRectangle().width, surroundings7.getRectangle().height);
         // g.drawRect(surroundings8.getRectangle().x, surroundings8.getRectangle().y, surroundings8.getRectangle().width, surroundings8.getRectangle().height);
@@ -126,7 +130,7 @@ public class GamePanel extends JPanel{
 
 
     public void drawPlatforms(Graphics g){
-        levelManager = new LevelManager(this);
+        levelManager = new LevelManager();
         levelManager.update();
         levelManager.draw(g);
     }

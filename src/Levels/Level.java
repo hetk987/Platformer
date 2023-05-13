@@ -1,27 +1,21 @@
 package Levels;
 
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 import utilz.LoadSave;
 
 public class Level {
 
 
-    private BufferedImage levelImage;
     private BufferedImage[] img;
     private BufferedImage anchor;
 
 
     public Level(BufferedImage levelImage){
-        this.levelImage = levelImage;
         anchor = LoadSave.getSpriteAtlas(LoadSave.ANCHOR);
         makeArray(levelImage);
     }
-
-
 
     public void drawLevel(Graphics g)
     {

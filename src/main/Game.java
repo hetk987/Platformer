@@ -1,17 +1,13 @@
 package main;
-import java.awt.Color;
-
-import javax.swing.BorderFactory;
-import javax.swing.border.Border;
 
 import Entities.*;
-import Levels.LevelManager;
 import inputs.*;
 import Physics.*;
 
 public class Game implements Runnable{
     private GameWindow gameWindow;
     private GamePanel gamePanel;
+    private Player mc;
     private Thread gameThread;
     private final int FPS_SET = 120;
     private final int UPS_SET = 200;
@@ -39,15 +35,13 @@ public class Game implements Runnable{
         Surroundings surroundings6 = new Surroundings(collisionWatcher, 600, 300,  32, 32); 
         Surroundings surroundings7 = new Surroundings(collisionWatcher, 530, 280,  32, 32);
         Surroundings surroundings8 = new Surroundings(collisionWatcher, 420, 230,  60, 32);//creating surroundings and passing collisions
-         Player mc = new Player(0, 300, collisionWatcher); //creating a player passing x and y positions and collisions instance
-       // Player obstaclePlayer = new Player(100, 400, collisionWatcher);
-       // MonitoringVillian a = new MonitoringVillian(100, 300, 800, 100, collisionWatcher);
-        //MonitoringVillian b = new MonitoringVillian(100, 600, 600, 200, collisionWatcher);
+
+        mc = new Player(0, 300, collisionWatcher); //creating a player passing x and y positions and collisions instance
+        MonitoringVillian mv = new MonitoringVillian(400, 350, 550, 375, collisionWatcher);
+
         gamePanel.setBackGround(surroundings1, surroundings2, surroundings3, surroundings4, surroundings5, surroundings6, surroundings7,surroundings8);
         gamePanel.addEntity(mc);
-        //gamePanel.addEntity(a);
-        //gamePanel.addEntity(b);
-       // gamePanel.addEntity(obstaclePlayer);
+        gamePanel.addEntity(mv);
         gamePanel.addKeyListener(new KeyBoardInputs(mc)); //creating keyboardinputs instance and passing it the main player
         
         gameWindow = new GameWindow(gamePanel);
@@ -63,8 +57,6 @@ public class Game implements Runnable{
         double timePerFrame = 1000000000.0 / FPS_SET;
         double timePerUpdate = 1000000000.0 / UPS_SET;
         long previousTime = System.nanoTime();
-        int frames = 0;
-        int updates = 0;
         double deltaU = 0;
         double deltaF = 0;
         long lastCheck = System.currentTimeMillis();
@@ -78,26 +70,22 @@ public class Game implements Runnable{
             if (deltaU>1)
             {
                 update();
-                updates++;
                 deltaU--;
             }
             if (deltaF>1)
             {
                 gamePanel.repaint();
-                frames++;
                 deltaF--;
             }
             if (System.currentTimeMillis() - lastCheck >= 1000) {
-                lastCheck = System.currentTimeMillis();
-               // System.out.println("FPS: " + frames + "UPS:" + updates);
-                frames = 0;
-                updates = 0;  
+                lastCheck = System.currentTimeMillis();  
             }
         }
     }
 
     private void update() {
         gamePanel.updateGame();
+        mc.updatePos();
     }
 
     private void StartGameLoop(){

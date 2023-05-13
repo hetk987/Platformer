@@ -21,14 +21,15 @@ public class Player implements Entity{
     private BufferedImage img;
     private BufferedImage[][] animation;
     private int animationIndex = 0;
-    public boolean velocityRight = false;
-    public boolean velocityLeft = false;
     public int gravityValue = 0;
     public boolean inAir = true;
     private int playerAction = PlayerConstants.IDLE_RIGHT;
     private int playerDirection = -1;
     private boolean moving;
     private boolean jump;
+    private int lastPressed = RIGHT;
+
+    private boolean left, up, right, down;
 
     public Player(int x, int y,  Collisions c){
         xPosition = x;
@@ -83,10 +84,10 @@ public class Player implements Entity{
     public void updateGravityValue(){
         if(gravityValue != 0){
             int toIncrement = gravityValue/(Math.abs(gravityValue));
-            if(velocityRight)
-                movePosition(2, 0);
-            else if(velocityLeft)
-                movePosition(-2, 0);
+            if(right)
+                movePosition(1, 0);
+            else if(left)
+                movePosition(-1, 0);
             else
                 movePosition(0, 0);
         for(int i=0; i<Math.abs(gravityValue); i++){
@@ -111,7 +112,6 @@ public class Player implements Entity{
 
     public void setDirection(int direction){
         playerDirection = direction;
-        moving = true;
     }
 
     public void setMoving(boolean moving){
@@ -155,27 +155,27 @@ public class Player implements Entity{
         return hitBox;
     }
 
-
-    public void updateEntity(){
-
-    }
-
-    public void setAnimationIndex(){
+    public void resetAnimationIndex(int pressed){
+        if(lastPressed == pressed)
+            return;
+        lastPressed = pressed;
         animationIndex = 0;
     }
 
     @Override
     public void setAnimation() {
+        if(!inAir && jump)
+            jump();
         if(moving){
             if(jump){
                 switch(playerDirection){
                     case LEFT:
                         playerAction = JUMPING_LEFT;
-                        movePosition(-1, 0);
+                        movePosition(0, 0);
                         break;
                     case RIGHT:
                         playerAction = JUMPING_RIGHT;
-                        movePosition(1, 0);
+                        movePosition(0, 0);
                         break;
                 }
             }
@@ -183,18 +183,68 @@ public class Player implements Entity{
                 switch(playerDirection){
                     case LEFT:
                         playerAction = RUNNING_LEFT;
-                        movePosition(-1, 0);
                         break;
                     case RIGHT:
                         playerAction = RUNNING_RIGHT;
-                        movePosition(1, 0);
                         break;
             }
         }
         else
-            playerAction = IDLE_RIGHT;
+            switch(playerDirection){
+                case LEFT:
+                    playerAction = IDLE_LEFT;
+                    break;
+                case RIGHT:
+                    playerAction = IDLE_RIGHT;
+                    break;
+            }
     }
 
+    public void setLeft(boolean bool){
+        left = bool;
+    }
+
+    public void setRight(boolean bool){
+        right = bool;
+    }
+
+    public void setUp(boolean bool){
+        up = bool;
+    }
+
+    public void setDown(boolean bool){
+        down = bool;
+    }
+
+    public boolean getLeft(){
+        return left;
+    }
+
+    public boolean getRight(){
+        return right;
+    }
+
+    public boolean getUp(){
+        return up;
+    }
+
+    public boolean getDown(){
+        return down;
+    }
+
+    public void updatePos(){
+        moving = false;
+        if(left && !right){
+            moving = true;
+            movePosition(-1, 0);
+            playerDirection = LEFT;
+        }
+        else if (!left && right){
+            moving = true;
+            movePosition(1, 0);
+            playerDirection = RIGHT;
+        } 
+    }
 
 
 }

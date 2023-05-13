@@ -14,6 +14,7 @@ public class Collisions {
     int futureX;
     int futureY; 
     Entity currentEntity;
+    Rectangle currentHitBox;
 
 
     public Collisions(){
@@ -26,6 +27,7 @@ public class Collisions {
 
     public void moveTo(Entity e, int x, int y){
         currentEntity = e;
+        currentHitBox = e.getHitBox();
         Rectangle platFormUnder = new Rectangle();
         boolean collisionFound = false;
         futureX = e.getXPosition() + x; //the x value where the entity wants to move
@@ -46,16 +48,15 @@ public class Collisions {
             }
         }
         if(!collisionFound){
-            System.out.println("no collision found for:" + currentEntity.getYPosition());
             currentEntity.setXPosition(futureX); //updates x position to new position
             currentEntity.setYPosition(futureY); //updates y position to new y position
             checkIfOffPlatform(newHitBox, platFormUnder);
         }
-    }
+}
 
 
     public void Intersection(Rectangle newHitBox, Rectangle intersectingWith){
-        if(checkIfStuckToTop(newHitBox, intersectingWith)){
+        if(checkIfStuckToCeiling(newHitBox, intersectingWith)){
             currentEntity.setInAir(true); 
             int currentGravity = Math.abs(currentEntity.getGravityValue());
             currentEntity.setGravityValue(currentGravity);
@@ -63,11 +64,12 @@ public class Collisions {
         else if(checkIfStuckToSides(newHitBox, intersectingWith)){
             currentEntity.setInAir(true);  
             currentEntity.setYPosition(futureY);
+
         }else{
             currentEntity.setInAir(false);
         }
-    }
 
+    }
 
     public boolean platFormUnderneath(Rectangle current, Rectangle checking){
         Rectangle checkForPlatform = new Rectangle(current.x, current.y + 30, current.width, current.height);
@@ -85,7 +87,7 @@ public class Collisions {
         return (current.intersects(checking));
     }
 
-    public boolean checkIfStuckToTop(Rectangle current, Rectangle checking){
+    public boolean checkIfStuckToCeiling(Rectangle current, Rectangle checking){
         Rectangle intersection = current.intersection(checking);
           if(current.y==intersection.y)
             return true;
