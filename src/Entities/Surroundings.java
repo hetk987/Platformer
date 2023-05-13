@@ -2,9 +2,6 @@ package Entities;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 
 import Physics.*;
 
@@ -13,33 +10,53 @@ public class Surroundings implements Entity{
 
     private BufferedImage img;
     public Rectangle hitBox;
+    public Rectangle hitBox1;
+    public Rectangle hitBox2;
+    public Rectangle hitBox3;
+    public Rectangle hitBox4;
     public Collisions colliderCheck;
-    public int xPosition = 300;
-    public int yPosition = 500;
-    public int xDifference = 50;
-    public int yDifference = 115;
+    public int xPosition = 0;
+    public int yPosition = 400;
+    public int xDifference = -50;
+    public int yDifference = 0;
     public boolean inAir = false;
     
-    public Surroundings(Collisions c){
-        importImage();
-        hitBox = new Rectangle(xPosition + xDifference, yPosition + yDifference, 350, 71);
+    public Surroundings(Collisions c, int x, int y, int w, int h){
+        hitBox = new Rectangle(x + xDifference, y + yDifference, w, h);
         colliderCheck = c;
         colliderCheck.addEntity(this);
     }
 
-    public void importImage() {
-        try {
-            img = ImageIO.read(new FileInputStream("res/platform2.png"));
-        } catch (IOException e) {
-            System.out.println("Reading Image Error");
-            e.printStackTrace();
-        }
+    public Rectangle getRectangle()
+    {
+        return hitBox;
+    }
+
+    public boolean getInAir(){
+        return false;
+    }
+
+    public void updateGravityValue(){
+        
     }
 
     public void updateGravityTick() {
         
     }
 
+    public void setGravityValue(int g){
+
+    }
+
+    public int getGravityValue(){
+        return 0;
+    }
+    
+
+    public void updateAnimation(){
+
+    }
+    
     public BufferedImage getAnimation(){
         return img;
     }
@@ -48,9 +65,7 @@ public class Surroundings implements Entity{
         //updateAnimationTick();
     }
 
-    public Rectangle getHitBox(){
-        return hitBox;
-    }
+   
 
 
     public int getXDifference(){
@@ -73,31 +88,29 @@ public class Surroundings implements Entity{
         return yPosition;
     }
     public void setXPosition(int x){
+        xPosition = x;
 
     }
     public void setYPosition(int y){
+        yPosition = y;
 
     }
     public void updateAnimationTick(){
 
     }
+    public Rectangle getHitBox(){
+        return hitBox;
+    }
+
     public void setInAir(boolean b){
 
     }
-    public int getHitBoxY(){
-        return 0;
+
+    @Override
+    public void setAnimation() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setAnimation'");
     }
 
-    public void updateAnimation(){
-
-    }
-
-    public boolean getInAir(){
-        return false;
-    }
-
-    public void updateGravityValue(){
-        
-    }
 
 }

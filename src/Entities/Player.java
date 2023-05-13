@@ -2,49 +2,51 @@ package Entities;
 
 import java.awt.Rectangle;
 import Physics.*;
+import utilz.Constants.PlayerConstants;
 
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
+import static utilz.Constants.PlayerConstants.*;
+import static utilz.Constants.Directions.*;
+
 public class Player implements Entity{
     private int xPosition, yPosition;
     public Rectangle hitBox;
     public Collisions colliderCheck;
-    public int xDifference = 65;
-    public int yDifference = 35;
+    private int xDifference = 22;
+    private int yDifference = 15;
     private BufferedImage img;
     private BufferedImage[][] animation;
-    private int animationAction =0;
     private int animationIndex = 0;
-    private int animationTick=0;
-    private int animationSpeed = 3;
-    public boolean velocityRight = false;
-    public boolean velocityLeft = false;
-    public int gravityValue = 8;
+    public int gravityValue = 0;
     public boolean inAir = true;
+    private int playerAction = PlayerConstants.IDLE_RIGHT;
+    private int playerDirection = -1;
+    private boolean moving;
+    private boolean jump;
+    private int lastPressed = RIGHT;
 
-    private int gravityTick=0;
-    private int gravitySpeed = 8;
+    private boolean left, up, right, down;
 
     public Player(int x, int y,  Collisions c){
         xPosition = x;
         yPosition = y;
-        hitBox = new Rectangle(xPosition + xDifference, yPosition + yDifference, 70, 120);
+        hitBox = new Rectangle(xPosition + xDifference, yPosition + yDifference, 30, 45);
         colliderCheck = c;
         colliderCheck.addEntity(this);
-
         importImage();
         loadAnimation();
     }
 
     public void loadAnimation() {
-        animation = new BufferedImage[1][4];
-        for(int i = 0; i<animation[animationAction].length; i++){
-            animation[animationAction][i] = img.getSubimage(i*100, 0, 100, 100);
-            //System.out.println(animationAction + "+" + i);
-        }
+        animation = new BufferedImage[6][7];
+        for(int j = 0; j<animation.length;j++)
+            for(int i = 0; i<animation[j].length; i++){
+                animation[j][i] = img.getSubimage(i*200, j*200, 200, 200);
+            }
     }
 
     public void importImage() {
@@ -56,6 +58,14 @@ public class Player implements Entity{
         }
     }
 
+    public void setGravityValue(int g){
+        gravityValue = g;
+    }
+
+    public int getGravityValue(){
+        return gravityValue;
+    }
+    
     public void setInAir(boolean status){
         inAir = status;
     }
@@ -66,71 +76,51 @@ public class Player implements Entity{
 
     public void updateAnimation(){
         animationIndex++;
-        if(animationIndex>=animation[animationAction].length)
-            {
+        if(animationIndex>= GetSpriteAmount(playerAction))
                 animationIndex = 0;
-            } 
     }
 
-   /* public void updateAnimationTick() {
-        animationTick++;
-        if(animationTick >= animationSpeed){
-            animationIndex++;
-            animationTick = 0;
-            if(animationIndex>=animation.length)
-            {
-                animationIndex = 0;
-            }
-        } 
-    } */
-
-    /*public void updateGravityTick() {
-        gravityTick++;
-        if(inAir){
-            if(gravityTick >= gravitySpeed){
-                gravityTick = 0;
-                if(velocityRight)
-                    movePosition(7, gravityValue);
-                else if(velocityLeft)
-                    movePosition(-7, gravityValue);
-                else
-                    movePosition(0, gravityValue);
-                //System.out.println(gravityValue);
-                gravityValue++;
-            } 
-        }
-    }*/
 
     public void updateGravityValue(){
-        if(velocityRight)
-            movePosition(7, gravityValue);
-        else if(velocityLeft)
-            movePosition(-7, gravityValue);
-        else
-            movePosition(0, gravityValue);
-        //System.out.println(gravityValue);
+        if(gravityValue != 0){
+            int toIncrement = gravityValue/(Math.abs(gravityValue));
+            if(right)
+                movePosition(2, 0);
+            else if(left)
+                movePosition(-2, 0);
+            else
+                movePosition(0, 0);
+        for(int i=0; i<Math.abs(gravityValue); i++){
+            movePosition(0, toIncrement);
+            }
+        }
         gravityValue++;
     }
 
-
-
-    public int getHitBoxY(){
-        return hitBox.y;
-    }
-
+ 
     public void jump(){
+        jump = true;
         if(!inAir){
             inAir = true;
-            gravityValue = -8; //start of gravity vallue
-            colliderCheck.moveTo(this, 0, -10); //jump
+            gravityValue = -12; //start of gravity vallue
         }
     } 
 
     public BufferedImage getAnimation(){
-       // System.out.println(animationIndex);
-        return animation[animationAction][animationIndex];
+        return animation[playerAction][animationIndex];
     }
 
+    public void setDirection(int direction){
+        playerDirection = direction;
+    }
+
+    public void setMoving(boolean moving){
+        this.moving = moving;   
+    }
+
+    public void setJump(boolean jump){
+        this.jump = jump;
+    }
 
     public void movePosition(int xNum, int yNum){ 
        colliderCheck.moveTo(this, xNum, yNum); // sends the amount the player wants to move which will then update it depending on where it can move
@@ -152,7 +142,6 @@ public class Player implements Entity{
     }
 
     public void setXPosition(int newX){
-        animationAction = 0;
         xPosition = newX;
         hitBox.x = xPosition + xDifference;
     }
@@ -166,13 +155,96 @@ public class Player implements Entity{
         return hitBox;
     }
 
-
-    public void updateEntity(){
-
+    public void resetAnimationIndex(int pressed){
+        if(lastPressed == pressed)
+            return;
+        lastPressed = pressed;
+        animationIndex = 0;
     }
 
-    
-    
+    @Override
+    public void setAnimation() {
+        if(!inAir && jump)
+            jump();
+        if(moving){
+            if(jump){
+                switch(playerDirection){
+                    case LEFT:
+                        playerAction = JUMPING_LEFT;
+                        movePosition(-1, 0);
+                        break;
+                    case RIGHT:
+                        playerAction = JUMPING_RIGHT;
+                        movePosition(1, 0);
+                        break;
+                }
+            }
+            else
+                switch(playerDirection){
+                    case LEFT:
+                        playerAction = RUNNING_LEFT;
+                        break;
+                    case RIGHT:
+                        playerAction = RUNNING_RIGHT;
+                        break;
+            }
+        }
+        else
+            switch(playerDirection){
+                case LEFT:
+                    playerAction = IDLE_LEFT;
+                    break;
+                case RIGHT:
+                    playerAction = IDLE_RIGHT;
+                    break;
+            }
+    }
+
+    public void setLeft(boolean bool){
+        left = bool;
+    }
+
+    public void setRight(boolean bool){
+        right = bool;
+    }
+
+    public void setUp(boolean bool){
+        up = bool;
+    }
+
+    public void setDown(boolean bool){
+        down = bool;
+    }
+
+    public boolean getLeft(){
+        return left;
+    }
+
+    public boolean getRight(){
+        return right;
+    }
+
+    public boolean getUp(){
+        return up;
+    }
+
+    public boolean getDown(){
+        return down;
+    }
+
+    public void updatePos(){
+        moving = false;
+        if(left && !right){
+            moving = true;
+            movePosition(-1, 0);
+            playerDirection = LEFT;
+        }
+        else if (!left && right){
+            moving = true;
+            movePosition(1, 0);
+            playerDirection = RIGHT;
+        } 
+    }
 
 
 }

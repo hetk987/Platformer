@@ -3,80 +3,91 @@ package inputs;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.lang.model.util.ElementScanner14;
-
-import main.GamePanel;
 import Entities.Player;
-import Entities.Entity;
+
+import static utilz.Constants.Directions.*;
 
 public class KeyBoardInputs implements KeyListener{
 
+    //Instance fields needed
     private Player player;
-    private boolean spaceBar;
-    private boolean right;
-    private boolean left;
 
+    //Constructor includes player instanceation. 
     public KeyBoardInputs(Player player){
         this.player = player;
     }
+
     @Override
     public void keyTyped(KeyEvent e) {
         // TODO Auto-generated method stub
+        // NOT USED
     }
 
+    // Takes in movement input from arrows for movement and the spacebar for jump
     @Override
-    public void keyPressed(KeyEvent e) {
-        player.velocityLeft = false;
-        player.velocityRight = false;
+    public void keyPressed(KeyEvent e) {        
+  
+
         switch(e.getKeyCode()){
-        case KeyEvent.VK_W: case KeyEvent.VK_UP:
-            player.jump(); //move up
-            break;
-        case KeyEvent.VK_A: case KeyEvent.VK_LEFT:
-            left = true; //set left to true, incase space bar is also pressed
-            if(spaceBar){
-                player.jump(); //passing jump the xy direction prevents the player from moving left/right in the way
-                player.velocityLeft = true; //setting velocity to left true so that the player falls at an angle to the left
-            }
-            player.movePosition(-20,0); 
-            break;
-        case KeyEvent.VK_S: case KeyEvent.VK_DOWN:
-            player.movePosition(0,5);
-            break;
-        case KeyEvent.VK_D: case KeyEvent.VK_RIGHT:
-            right = true; //set right to true, incase space bar is also pressed
-            if(spaceBar){
+            // LEFT MOVEMENT
+
+            case KeyEvent.VK_A: case KeyEvent.VK_LEFT:
+                player.setLeft(true);
+                player.resetAnimationIndex(LEFT);
+
+                if(player.getUp()){
+                    player.resetAnimationIndex(UP);
+                    player.jump(); 
+                }
+                player.setDirection(LEFT); // sets animation facing left
+                break;
+
+
+            //RIGHT MOVEMENT
+            case KeyEvent.VK_D: case KeyEvent.VK_RIGHT:
+                player.setRight(true);
+                player.resetAnimationIndex(RIGHT);
+                if(player.getUp()){
+                    player.resetAnimationIndex(UP);
+                    player.jump();
+                }
+                player.setDirection(RIGHT); //sets animation facing the right
+                break ;
+
+            //UP MOVEMENT
+            case KeyEvent.VK_SPACE: case KeyEvent.VK_W: case KeyEvent.VK_UP:
+                player.setUp(true);
+                player.resetAnimationIndex(UP);
+                if(player.getRight()){ //Jump to the right 
+                    player.setDirection(RIGHT); 
+                }
+                else if(player.getLeft()){ //Jump to the left
+                    player.setDirection(LEFT);
+                }
                 player.jump();
-                player.velocityRight = true; //setting velocity to right true so that the player falls at an angle to the left
-            }
-                player.movePosition(20,0);
-            break ;
-        case KeyEvent.VK_SPACE:
-            spaceBar = true;
-            if(right){
-                player.movePosition(5,0);
-                player.velocityRight = true;
-            }
-            else if(left){
-                player.movePosition(-5,0);
-                player.velocityLeft = true;
-            }
-                player.jump();
-            break;
+                break;
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+        // Sets both moving and jump to false
+        player.resetAnimationIndex(IDLE);
+
+
         switch(e.getKeyCode()){
-            case KeyEvent.VK_SPACE:
-                spaceBar = false; //makes sure the variable is only true when space bar is held
+            case KeyEvent.VK_SPACE:case KeyEvent.VK_W: case KeyEvent.VK_UP:
+                player.setUp(false);
+                player.setJump(false);    
                 break;
             case KeyEvent.VK_D: case KeyEvent.VK_RIGHT:
-                right = false;
+                player.setRight(false);
+                player.setDirection(RIGHT);
+
                 break;
             case KeyEvent.VK_A: case KeyEvent.VK_LEFT:
-                left = false;
+                player.setLeft(false);
+                player.setDirection(LEFT);
                 break;
         }
     }
