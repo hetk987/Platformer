@@ -6,6 +6,7 @@ public class Constants{
         public static final int UP = 1;
         public static final int RIGHT = 2;
         public static final int DOWN = 3;
+        public static final int IDLE = -1;
     }
     public static class PlayerConstants{
         public static final int IDLE_RIGHT = 0;
@@ -23,7 +24,6 @@ public class Constants{
                     return 4;
                 case JUMPING_LEFT: case JUMPING_RIGHT:
                     return 1;
-                
                 default:
                     return 1;
             }

@@ -3,7 +3,6 @@ package Entities;
 import java.awt.Rectangle;
 import Physics.*;
 
-
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -19,7 +18,6 @@ public class MonitoringVillian implements Entity{
     private BufferedImage img;
     private BufferedImage[][] animation;
     private int animationIndex = 0;
-
     private int animationAction = 0;
     public boolean inAir = false;
 
@@ -49,17 +47,6 @@ public class MonitoringVillian implements Entity{
         }
     }
 
-    /*public void updateAnimationTick() {
-        animationTick++;
-        if(animationTick >= animationSpeed){
-            animationIndex++;
-            animationTick = 0;
-            if(animationIndex>=animation.length)
-            {
-                animationIndex = 0;
-            }
-        } 
-    }*/
 
     public void updateAnimation(){
         animationIndex++;
@@ -128,9 +115,6 @@ public class MonitoringVillian implements Entity{
 
     }
 
-    public int getHitBoxY(){
-        return 0;
-    }
 
     public boolean getInAir(){
         return false;
@@ -144,6 +128,18 @@ public class MonitoringVillian implements Entity{
     public void setAnimation() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'setAnimation'");
+    }
+
+    @Override
+    public void setGravityValue(int g) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setGravityValue'");
+    }
+
+    @Override
+    public int getGravityValue() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getGravityValue'");
     }
     
     

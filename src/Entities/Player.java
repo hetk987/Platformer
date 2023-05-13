@@ -13,40 +13,34 @@ import static utilz.Constants.PlayerConstants.*;
 import static utilz.Constants.Directions.*;
 
 public class Player implements Entity{
-    //Instance for logic
     private int xPosition, yPosition;
     public Rectangle hitBox;
     public Collisions colliderCheck;
-    private int xDifference = 65;
-    private int yDifference = 35;
-
+    private int xDifference = 22;
+    private int yDifference = 15;
     private BufferedImage img;
     private BufferedImage[][] animation;
-    public boolean velocityRight = false;
-    public boolean velocityLeft = false;
+    private int animationIndex = 0;
     public int gravityValue = 0;
     public boolean inAir = true;
-
-    //Used to change Animation
-    private int animationIndex = 0;
     private int playerAction = PlayerConstants.IDLE_RIGHT;
     private int playerDirection = -1;
     private boolean moving;
     private boolean jump;
+    private int lastPressed = RIGHT;
 
-    //Constructor
+    private boolean left, up, right, down;
+
     public Player(int x, int y,  Collisions c){
         xPosition = x;
         yPosition = y;
-        hitBox = new Rectangle(xPosition + xDifference, yPosition + yDifference, 70, 120);
+        hitBox = new Rectangle(xPosition + xDifference, yPosition + yDifference, 30, 45);
         colliderCheck = c;
         colliderCheck.addEntity(this);
-
         importImage();
         loadAnimation();
     }
 
-    //Loads the image into the buffered Image as a 2D array to then use for rendering. 
     public void loadAnimation() {
         animation = new BufferedImage[6][7];
         for(int j = 0; j<animation.length;j++)
@@ -64,6 +58,14 @@ public class Player implements Entity{
         }
     }
 
+    public void setGravityValue(int g){
+        gravityValue = g;
+    }
+
+    public int getGravityValue(){
+        return gravityValue;
+    }
+    
     public void setInAir(boolean status){
         inAir = status;
     }
@@ -80,30 +82,31 @@ public class Player implements Entity{
 
 
     public void updateGravityValue(){
-        if(velocityRight)
-            movePosition(7, gravityValue);
-        else if(velocityLeft)
-            movePosition(-7, gravityValue);
-        else
-            movePosition(0, gravityValue);
-        //System.out.println(gravityValue);
+        if(gravityValue != 0){
+            int toIncrement = gravityValue/(Math.abs(gravityValue));
+            if(right)
+                movePosition(2, 0);
+            else if(left)
+                movePosition(-2, 0);
+            else
+                movePosition(0, 0);
+        for(int i=0; i<Math.abs(gravityValue); i++){
+            movePosition(0, toIncrement);
+            }
+        }
         gravityValue++;
     }
 
-    public int getHitBoxY(){
-        return hitBox.y;
-    }
-
+ 
     public void jump(){
         jump = true;
         if(!inAir){
             inAir = true;
-            gravityValue = -20; //start of gravity vallue
+            gravityValue = -12; //start of gravity vallue
         }
     } 
 
     public BufferedImage getAnimation(){
-       // System.out.println(animationIndex);
         return animation[playerAction][animationIndex];
     }
 
@@ -152,23 +155,27 @@ public class Player implements Entity{
         return hitBox;
     }
 
-    public void resetAnimationIndex(String lastPressed, String pressed){
-        if(lastPressed.equals(pressed))
+    public void resetAnimationIndex(int pressed){
+        if(lastPressed == pressed)
             return;
+        lastPressed = pressed;
         animationIndex = 0;
     }
 
+    @Override
     public void setAnimation() {
+        if(!inAir && jump)
+            jump();
         if(moving){
             if(jump){
                 switch(playerDirection){
                     case LEFT:
                         playerAction = JUMPING_LEFT;
-                        movePosition(-5, 0);
+                        movePosition(-1, 0);
                         break;
                     case RIGHT:
                         playerAction = JUMPING_RIGHT;
-                        movePosition(5, 0);
+                        movePosition(1, 0);
                         break;
                 }
             }
@@ -176,11 +183,9 @@ public class Player implements Entity{
                 switch(playerDirection){
                     case LEFT:
                         playerAction = RUNNING_LEFT;
-                        movePosition(-5, 0);
                         break;
                     case RIGHT:
                         playerAction = RUNNING_RIGHT;
-                        movePosition(5, 0);
                         break;
             }
         }
@@ -192,6 +197,54 @@ public class Player implements Entity{
                 case RIGHT:
                     playerAction = IDLE_RIGHT;
                     break;
-        }
+            }
     }
+
+    public void setLeft(boolean bool){
+        left = bool;
+    }
+
+    public void setRight(boolean bool){
+        right = bool;
+    }
+
+    public void setUp(boolean bool){
+        up = bool;
+    }
+
+    public void setDown(boolean bool){
+        down = bool;
+    }
+
+    public boolean getLeft(){
+        return left;
+    }
+
+    public boolean getRight(){
+        return right;
+    }
+
+    public boolean getUp(){
+        return up;
+    }
+
+    public boolean getDown(){
+        return down;
+    }
+
+    public void updatePos(){
+        moving = false;
+        if(left && !right){
+            moving = true;
+            movePosition(-1, 0);
+            playerDirection = LEFT;
+        }
+        else if (!left && right){
+            moving = true;
+            movePosition(1, 0);
+            playerDirection = RIGHT;
+        } 
+    }
+
+
 }
