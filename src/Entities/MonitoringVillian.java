@@ -20,6 +20,7 @@ public class MonitoringVillian implements Entity{
     public Collisions colliderCheck;
     public int xDifference = -10;
     public int yDifference = -10;
+    private int gravityValue = 0;
     private BufferedImage img;
     private BufferedImage[][] animation;
     private int animationIndex = 0;
@@ -127,6 +128,14 @@ public class MonitoringVillian implements Entity{
 
     public void updateGravityValue(){
 
+    }
+
+    public void setGravityValue(int g){
+
+    }
+
+    public int getGravityValue(){
+        return gravityValue;
     }
 
     @Override

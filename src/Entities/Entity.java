@@ -18,6 +18,8 @@ public interface Entity {
     public abstract void setInAir(boolean b);
     public abstract boolean getInAir();
     public abstract void updateGravityValue();
+    public abstract void setGravityValue(int g);
+    public abstract int getGravityValue();
     public void updateAnimation();
     public abstract void setAnimation();
 }

@@ -46,8 +46,9 @@ public class Collisions {
             }
         }
         if(!collisionFound){
-            e.setXPosition(futureX); //updates x position to new position
-            e.setYPosition(futureY); //updates y position to new y position
+            System.out.println("no collision found for:" + currentEntity.getYPosition());
+            currentEntity.setXPosition(futureX); //updates x position to new position
+            currentEntity.setYPosition(futureY); //updates y position to new y position
             checkIfOffPlatform(newHitBox, platFormUnder);
         }
     }
@@ -56,6 +57,8 @@ public class Collisions {
     public void Intersection(Rectangle newHitBox, Rectangle intersectingWith){
         if(checkIfStuckToTop(newHitBox, intersectingWith)){
             currentEntity.setInAir(true); 
+            int currentGravity = Math.abs(currentEntity.getGravityValue());
+            currentEntity.setGravityValue(currentGravity);
         }
         else if(checkIfStuckToSides(newHitBox, intersectingWith)){
             currentEntity.setInAir(true);  
@@ -91,7 +94,7 @@ public class Collisions {
 
     public boolean checkIfStuckToSides(Rectangle current, Rectangle checking){
         Rectangle intersection = current.intersection(checking);
-          if(current.width == intersection.width || ((current.y+current.height-1)==intersection.y))
+          if(((current.y+current.height-1)==intersection.y))
             return false;
         return true;
     }

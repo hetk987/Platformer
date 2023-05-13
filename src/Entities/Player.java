@@ -16,8 +16,8 @@ public class Player implements Entity{
     private int xPosition, yPosition;
     public Rectangle hitBox;
     public Collisions colliderCheck;
-    private int xDifference = 65;
-    private int yDifference = 35;
+    private int xDifference = 85;
+    private int yDifference = 43;
     private BufferedImage img;
     private BufferedImage[][] animation;
     private int animationIndex = 0;
@@ -33,7 +33,7 @@ public class Player implements Entity{
     public Player(int x, int y,  Collisions c){
         xPosition = x;
         yPosition = y;
-        hitBox = new Rectangle(xPosition + xDifference, yPosition + yDifference, 70, 120);
+        hitBox = new Rectangle(xPosition + xDifference, yPosition + yDifference, 30, 117);
         colliderCheck = c;
         colliderCheck.addEntity(this);
         importImage();
@@ -86,6 +86,14 @@ public class Player implements Entity{
             }
         }
         gravityValue++;
+    }
+
+    public int getGravityValue(){
+        return gravityValue;
+    }
+
+    public void setGravityValue(int g){
+        gravityValue = g;
     }
 
  

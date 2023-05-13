@@ -40,6 +40,15 @@ public class Surroundings implements Entity{
         
     }
 
+    public void setGravityValue(int g){
+
+    }
+
+    public int getGravityValue(){
+        return 0;
+    }
+
+
     public BufferedImage getAnimation(){
         return img;
     }
