@@ -16,9 +16,6 @@ public class Constants{
         public static final int JUMPING_RIGHT = 4;
         public static final int JUMPING_LEFT = 5;
 
-        public static final int VILLAIN_RIGHT = 0;
-        public static final int VILLAIN_LEFT = 1;
-
         public static int GetSpriteAmount(int playerAction){
             switch (playerAction) {
                 case IDLE_LEFT: case IDLE_RIGHT:
@@ -30,11 +27,9 @@ public class Constants{
                 default:
                     return 1;
             }
-        
-
+        }
 
 
     }
-}
 
 }

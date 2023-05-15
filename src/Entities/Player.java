@@ -126,6 +126,19 @@ public class Player implements Entity{
        colliderCheck.moveTo(this, xNum, yNum); // sends the amount the player wants to move which will then update it depending on where it can move
     }
 
+    public void playerDies(){
+        xPosition = 0;
+        hitBox.x = xPosition + xDifference;
+        yPosition = 300;
+        hitBox.y = yPosition+ yDifference;
+        //this.setMoving(true);
+        this.setInAir(true);
+        this.setJump(false);
+        right = false;
+        left = false;
+        
+    }
+
     public int getXPosition(){
         return xPosition;
     }

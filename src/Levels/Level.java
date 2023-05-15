@@ -19,9 +19,9 @@ public class Level {
 
     public void drawLevel(Graphics g)
     {
-        for(int i =0; i<6;i++){
-            g.drawImage(img[i], i*32, 0, null);
-        }
+        
+
+        
 
 
 
@@ -88,7 +88,7 @@ public class Level {
         g.drawImage(img[4], 400, 230, null);
         g.drawImage(img[4], 370, 230, null);
 
-        g.drawImage(anchor, 350,90,null);
+        g.drawImage(anchor, 350,50,null);
 
         
 

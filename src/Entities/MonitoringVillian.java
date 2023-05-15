@@ -21,6 +21,7 @@ public class MonitoringVillian implements Entity{
     private int animationIndex = 0;
     private int animationAction = 0;
     public boolean inAir = false;
+    private int movementSpeed = 1;
 
     public MonitoringVillian(int xpos, int ypos, int rightBound, int leftBound, Collisions c){
         xPosition = xpos;
@@ -85,12 +86,12 @@ public class MonitoringVillian implements Entity{
 
     public void updateEntity(){
         if(rightDirection){
-            xPosition++;
+            xPosition+=movementSpeed;  
             if(xPosition >= rightBound)
                 rightDirection = false;
         }
         else{
-            xPosition--;
+            xPosition-=movementSpeed;
             if(xPosition <= leftBound)
                 rightDirection = true;
         }
@@ -152,6 +153,9 @@ public class MonitoringVillian implements Entity{
         throw new UnsupportedOperationException("Unimplemented method 'getGravityValue'");
     }
     
+    public void setSpeed(int x){
+        movementSpeed = x;
+    }
     
 
 }
