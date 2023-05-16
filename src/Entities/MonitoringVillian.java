@@ -2,6 +2,7 @@ package Entities;
 
 import java.awt.Rectangle;
 import Physics.*;
+import utilz.Constants.PlayerConstants;
 
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
@@ -10,37 +11,41 @@ import javax.imageio.ImageIO;
 
 public class MonitoringVillian implements Entity{
     public int xPosition, yPosition, rightBound, leftBound;
-    public boolean rightDirection;
+    public boolean rightDirection = true;
     public Rectangle hitBox;
     public Collisions colliderCheck;
-    public int xDifference = -10;
-    public int yDifference = -10;
+    public int xDifference = 9;
+    public int yDifference = 15;
     private BufferedImage img;
     private BufferedImage[][] animation;
     private int animationIndex = 0;
     private int animationAction = 0;
     public boolean inAir = false;
+    public int movementSpeed = 1;
 
     public MonitoringVillian(int xpos, int ypos, int rightBound, int leftBound, Collisions c){
         xPosition = xpos;
         yPosition = ypos;
         this.rightBound = rightBound;
         this.leftBound = leftBound;
-        hitBox = new Rectangle(xPosition + xDifference, yPosition + yDifference, 220, 70);
+        hitBox = new Rectangle(xPosition + xDifference, yPosition + yDifference, 50, 25);
         colliderCheck = c;
         colliderCheck.addEntity(this);
+        importImage();
+        loadAnimation();
     }
 
     public void loadAnimation() {
-        animation = new BufferedImage[4][1];
-        for(int i = 0; i<animation.length; i++){
-            animation[i][animationAction] = img.getSubimage(i*100, 0, 100, 100);
-        }
+        animation = new BufferedImage[2][4];
+        for(int j = 0; j<animation.length;j++)
+            for(int i = 0; i<animation[j].length; i++){
+                animation[j][i] = img.getSubimage(i*100, j*100, 100, 100);
+            }
     }
 
     public void importImage() {
         try {
-            img = ImageIO.read(new FileInputStream("res/diverSpriteAtlas.png"));
+            img = ImageIO.read(new FileInputStream("res/sharkAnimation.png"));
         } catch (IOException e) {
             System.out.println("Reading Image Error");
             e.printStackTrace();
@@ -50,14 +55,12 @@ public class MonitoringVillian implements Entity{
 
     public void updateAnimation(){
         animationIndex++;
-        if(animationIndex>=animation.length)
-            {
+        if(animationIndex >= 4)
                 animationIndex = 0;
-            }
-    } 
+    }
 
     public BufferedImage getAnimation(){
-        return animation[animationIndex][animationAction];
+        return animation[animationAction][animationIndex];
     }
 
     public void movePosition(int xNum, int yNum){
@@ -83,17 +86,17 @@ public class MonitoringVillian implements Entity{
 
     public void updateEntity(){
         if(rightDirection){
-            xPosition++;
-            if(xPosition > rightBound)
+            xPosition+=movementSpeed;  
+            if(xPosition >= rightBound)
                 rightDirection = false;
         }
         else{
-            xPosition--;
-            if(xPosition < leftBound)
+            xPosition-=movementSpeed;
+            if(xPosition <= leftBound)
                 rightDirection = true;
         }
-        hitBox.x = xPosition-10;
-        hitBox.y = yPosition-10;
+        hitBox.x = xPosition+10;
+        hitBox.y = yPosition+20;
     } 
 
     public void setXPosition(int newX){
@@ -124,10 +127,18 @@ public class MonitoringVillian implements Entity{
 
     }
 
+    public boolean getDirection()
+    {
+        return rightDirection;
+    }
     @Override
     public void setAnimation() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setAnimation'");
+        if(!this.getDirection()){
+            animationAction = 1;
+        }
+        else{
+            animationAction = 0;
+        }
     }
 
     @Override
@@ -142,6 +153,9 @@ public class MonitoringVillian implements Entity{
         throw new UnsupportedOperationException("Unimplemented method 'getGravityValue'");
     }
     
+    public void setSpeed(int x){
+        movementSpeed = x;
+    }
     
 
 }

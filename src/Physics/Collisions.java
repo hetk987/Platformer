@@ -1,9 +1,10 @@
 package Physics;
 import Entities.*;
-
+import gamestates.Gamestate;
 
 import java.util.ArrayList;
 
+import org.w3c.dom.css.Rect;
 
 import java.awt.Rectangle;
 
@@ -65,7 +66,8 @@ public class Collisions {
             currentEntity.setInAir(true);  
             currentEntity.setYPosition(futureY);
 
-        }else{
+        }
+        else{
             currentEntity.setInAir(false);
         }
 
@@ -100,6 +102,9 @@ public class Collisions {
             return false;
         return true;
     }
+    
+
+    
 }
 
  

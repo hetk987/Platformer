@@ -16,7 +16,7 @@ public class Player implements Entity{
     private int xPosition, yPosition;
     public Rectangle hitBox;
     public Collisions colliderCheck;
-    private int xDifference = 22;
+    private int xDifference = 27;
     private int yDifference = 15;
     private BufferedImage img;
     private BufferedImage[][] animation;
@@ -28,13 +28,15 @@ public class Player implements Entity{
     private boolean moving;
     private boolean jump;
     private int lastPressed = RIGHT;
+    public int gravVal = -14;
+    public int playerSpeed = 1;
 
     private boolean left, up, right, down;
 
     public Player(int x, int y,  Collisions c){
         xPosition = x;
         yPosition = y;
-        hitBox = new Rectangle(xPosition + xDifference, yPosition + yDifference, 30, 45);
+        hitBox = new Rectangle(xPosition + xDifference, yPosition + yDifference, 20, 45);
         colliderCheck = c;
         colliderCheck.addEntity(this);
         importImage();
@@ -85,9 +87,9 @@ public class Player implements Entity{
         if(gravityValue != 0){
             int toIncrement = gravityValue/(Math.abs(gravityValue));
             if(right)
-                movePosition(2, 0);
+                movePosition(1, 0);
             else if(left)
-                movePosition(-2, 0);
+                movePosition(-1, 0);
             else
                 movePosition(0, 0);
         for(int i=0; i<Math.abs(gravityValue); i++){
@@ -102,7 +104,7 @@ public class Player implements Entity{
         jump = true;
         if(!inAir){
             inAir = true;
-            gravityValue = -12; //start of gravity vallue
+            gravityValue = gravVal; //start of gravity vallue
         }
     } 
 
@@ -124,6 +126,19 @@ public class Player implements Entity{
 
     public void movePosition(int xNum, int yNum){ 
        colliderCheck.moveTo(this, xNum, yNum); // sends the amount the player wants to move which will then update it depending on where it can move
+    }
+
+    public void playerDies(){
+        xPosition = 0;
+        hitBox.x = xPosition + xDifference;
+        yPosition = 300;
+        hitBox.y = yPosition+ yDifference;
+        //this.setMoving(true);
+        this.setInAir(true);
+        this.setJump(false);
+        right = false;
+        left = false;
+        
     }
 
     public int getXPosition(){
@@ -171,11 +186,11 @@ public class Player implements Entity{
                 switch(playerDirection){
                     case LEFT:
                         playerAction = JUMPING_LEFT;
-                        movePosition(-1, 0);
+                        movePosition(0, 0);
                         break;
                     case RIGHT:
                         playerAction = JUMPING_RIGHT;
-                        movePosition(1, 0);
+                        movePosition(0, 0);
                         break;
                 }
             }
@@ -236,12 +251,12 @@ public class Player implements Entity{
         moving = false;
         if(left && !right){
             moving = true;
-            movePosition(-1, 0);
+            movePosition(-playerSpeed, 0);
             playerDirection = LEFT;
         }
         else if (!left && right){
             moving = true;
-            movePosition(1, 0);
+            movePosition(playerSpeed, 0);
             playerDirection = RIGHT;
         } 
     }
