@@ -28,6 +28,7 @@ public class Player implements Entity{
     private boolean moving;
     private boolean jump;
     private int lastPressed = RIGHT;
+    public int gravVal = -14;
 
     private boolean left, up, right, down;
 
@@ -102,7 +103,7 @@ public class Player implements Entity{
         jump = true;
         if(!inAir){
             inAir = true;
-            gravityValue = -12; //start of gravity vallue
+            gravityValue = gravVal; //start of gravity vallue
         }
     } 
 

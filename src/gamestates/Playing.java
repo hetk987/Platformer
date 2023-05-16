@@ -35,17 +35,20 @@ public class Playing extends State implements Statemethods{
     public MonitoringVillian villain;
     private Anchor anchor;
     private Collisions collisionWatcher;
+    //private Game game;
 
 
     public Playing(Game game){
 
         super(game);
+        
         collisionWatcher = new Collisions();
         entitiesList = new ArrayList<Entity>();
         
         this.implementSurroundings(); //instantiates all surroundings objects for the platforms
         player = new Player(0, 300, collisionWatcher); //creates player with collisions
         villain = new MonitoringVillian(400, 350, 550, 375, collisionWatcher); // creates villains with collisions
+        
         anchor = new Anchor(collisionWatcher, 432, 80, 35, 64);
 
         //adds villain and plyer to entities list
@@ -283,4 +286,5 @@ public class Playing extends State implements Statemethods{
         return entitiesList.size();
     }
 
+    
 }

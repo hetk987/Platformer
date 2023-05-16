@@ -21,7 +21,7 @@ public class MonitoringVillian implements Entity{
     private int animationIndex = 0;
     private int animationAction = 0;
     public boolean inAir = false;
-    private int movementSpeed = 1;
+    public int movementSpeed = 1;
 
     public MonitoringVillian(int xpos, int ypos, int rightBound, int leftBound, Collisions c){
         xPosition = xpos;

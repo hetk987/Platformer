@@ -21,11 +21,12 @@ public class Game implements Runnable{
     private final int FPS_SET = 120;
     private final int UPS_SET = 200;
 
-    private Playing playing;
+    public Playing playing;
     private Menu menu;
     private GameOver gameOver;
     private GameWin gameWin;
     private MenuFrame menuFrame;
+    public Settings settings;
 
 
     public final static int TILE_DEFAULT_SIZE = 32;
@@ -84,6 +85,34 @@ public class Game implements Runnable{
 
 
         gamePanel.backbtn.addActionListener(back);
+
+        ActionListener gotoSettings = new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if(e.getSource() == menuFrame.settingsBtn){
+                   
+                    settings.setVisibility(true);
+                    menuFrame.setVisibility(false);
+                }
+            }
+        };
+
+        menuFrame.settingsBtn.addActionListener(gotoSettings);
+
+
+
+        settings = new Settings(this);
+        ActionListener back2 = new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if(e.getSource() == settings.btn){
+                   
+                    settings.setVisibility(false);
+                    menuFrame.setVisibility(true);
+                    
+                }
+            }
+        };
+
+        settings.btn.addActionListener(back2);
 
 
         StartGameLoop();

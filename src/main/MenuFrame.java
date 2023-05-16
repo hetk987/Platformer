@@ -12,7 +12,7 @@ public class MenuFrame extends JFrame {
     private JFrame menu;
     private JPanel panel;
     public JButton playBtn;
-    public JButton settings;
+    public JButton settingsBtn;
 
 
     public MenuFrame(){
@@ -28,10 +28,10 @@ public class MenuFrame extends JFrame {
 
 
         playBtn = new JButton("Play");
-        settings = new JButton("Settings");
+        settingsBtn = new JButton("Settings");
         //playBtn.setIcon(new ImageIcon("playbtn.png"));
         panel.add(playBtn);
-        panel.add(settings);
+        panel.add(settingsBtn);
     }
 
 
