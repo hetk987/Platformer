@@ -5,53 +5,55 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import Entities.Anchor;
 import Entities.Entity;
+import Entities.MonitoringVillian;
 import Entities.Player;
 import Entities.Surroundings;
 import Levels.LevelManager;
 import Physics.Collisions;
 import main.Game;
-
 import static utilz.Constants.Directions.*;
 
 
 public class Playing extends State implements Statemethods{
-    public ArrayList<Entity> entitiesList;
-    public Surroundings surroundings1;
-    public Surroundings surroundings2;
-    public Surroundings surroundings3;
-    public Surroundings surroundings4;
-    public Surroundings surroundings5;
-    public Surroundings surroundings6;
-    public Surroundings surroundings7;
-    public Surroundings surroundings8;
+
+    public ArrayList<Entity> entitiesList; //creates entity list
+    
     private int animationTick=0;
     private int animationSpeed = 30;
     private int gravityTick=0;
     private int gravitySpeed = 5;
-    Entity currentEntity;
+
     private LevelManager levelManager;
-    private Player player;
+    public Player player;
+    public MonitoringVillian villain;
+    private Anchor anchor;
     private Collisions collisionWatcher;
+    //private Game game;
 
 
     public Playing(Game game){
+
         super(game);
+        
         collisionWatcher = new Collisions();
         entitiesList = new ArrayList<Entity>();
+        
+        this.implementSurroundings(); //instantiates all surroundings objects for the platforms
+        player = new Player(0, 300, collisionWatcher); //creates player with collisions
+        villain = new MonitoringVillian(400, 350, 550, 375, collisionWatcher); // creates villains with collisions
+        
+        anchor = new Anchor(collisionWatcher, 432, 50, 35, 64);
 
-        Surroundings surroundings1 = new Surroundings(collisionWatcher, 0 , 400 , 240, 32);
-        Surroundings surroundings2 = new Surroundings(collisionWatcher, 240, 500,  160, 32);
-        Surroundings surroundings3 = new Surroundings(collisionWatcher, 400, 450,  32, 32);
-        Surroundings surroundings4 = new Surroundings(collisionWatcher, 433, 400,  225, 32);
-        Surroundings surroundings5 = new Surroundings(collisionWatcher, 710, 350,  47, 32);
-        Surroundings surroundings6 = new Surroundings(collisionWatcher, 600, 300,  32, 32); 
-        Surroundings surroundings7 = new Surroundings(collisionWatcher, 530, 280,  32, 32);
-        Surroundings surroundings8 = new Surroundings(collisionWatcher, 420, 230,  60, 32);//creating surroundings and passing collisions
-        player = new Player(0, 300, collisionWatcher); 
-        setBackGround(surroundings1, surroundings2, surroundings3, surroundings4, surroundings5, surroundings6, surroundings7,surroundings8);
+        //adds villain and plyer to entities list
         addEntity(player);
+        addEntity(villain);
+
     }
+
+
+
 
 
     @Override
@@ -59,13 +61,19 @@ public class Playing extends State implements Statemethods{
         player.updatePos();
         updateAnimationTick();
         updateGravityTick();
+        updateEntityCollisions(player, villain, anchor);
     }
+
     @Override
     public void draw(Graphics g) {
-        drawPlatforms(g);
-        updateSurroundings(g);
-        updateEntities(g);
+        
+        drawPlatforms(g);//draws in the level
+        updateSurroundings(g);//draws in the hitboxes of the platforms IF NECESARY
+        updateEntities(g);//draws in the villain and player
     }
+
+
+
     @Override
     public void mouseClicked(MouseEvent e) {
         // TODO Auto-generated method stub
@@ -86,6 +94,11 @@ public class Playing extends State implements Statemethods{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'mouseMoved'");
     }
+
+
+
+    
+
     @Override
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_P){
@@ -130,6 +143,7 @@ public class Playing extends State implements Statemethods{
                 break;
         }
     }
+
     @Override
     public void keyReleased(KeyEvent e) {
         // Sets both moving and jump to false
@@ -153,20 +167,45 @@ public class Playing extends State implements Statemethods{
         }
     }
     
+
+
+
+
     public void updateEntities(Graphics g){
         for(Entity currentEntity: entitiesList){ //loop through each entity
-            currentEntity.setAnimation();
-            g.drawImage(currentEntity.getAnimation(), currentEntity.getXPosition(), currentEntity.getYPosition(), 75, 75, null); //draw entity
+            if(currentEntity instanceof Player){ //if its a player
+                currentEntity.setAnimation();
+                g.drawRect(currentEntity.getHitBox().x, currentEntity.getHitBox().y, currentEntity.getHitBox().width, currentEntity.getHitBox().height); //draw hit box
+                g.drawImage(currentEntity.getAnimation(), currentEntity.getXPosition(), currentEntity.getYPosition(), 75, 75, null); //draw player
+            }
+            else if(currentEntity instanceof MonitoringVillian){
+                currentEntity.setAnimation();
+                g.drawRect(currentEntity.getHitBox().x, currentEntity.getHitBox().y, currentEntity.getHitBox().width, currentEntity.getHitBox().height); //draw hit box
+                g.drawImage(currentEntity.getAnimation(), currentEntity.getXPosition(), currentEntity.getYPosition(), 70, 70, null); //draw villain
+                ((MonitoringVillian) currentEntity).updateEntity();//basically updates hitbox
+            }
+
         }
+
     }
 
     public void updateSurroundings(Graphics g){
-         g.drawRect(surroundings1.getRectangle().x, surroundings1.getRectangle().y, surroundings1.getRectangle().width, surroundings1.getRectangle().height); //draw surroundings
-         g.drawRect(surroundings2.getRectangle().x, surroundings2.getRectangle().y, surroundings2.getRectangle().width, surroundings2.getRectangle().height);
-         g.drawRect(surroundings3.getRectangle().x, surroundings3.getRectangle().y, surroundings3.getRectangle().width, surroundings3.getRectangle().height);
-         g.drawRect(surroundings4.getRectangle().x, surroundings4.getRectangle().y, surroundings4.getRectangle().width, surroundings4.getRectangle().height);
-         g.drawRect(surroundings5.getRectangle().x, surroundings5.getRectangle().y, surroundings5.getRectangle().width, surroundings5.getRectangle().height);
+        //  g.drawRect(surroundings1.getRectangle().x, surroundings1.getRectangle().y, surroundings1.getRectangle().width, surroundings1.getRectangle().height); //draw surroundings
+        //  g.drawRect(surroundings2.getRectangle().x, surroundings2.getRectangle().y, surroundings2.getRectangle().width, surroundings2.getRectangle().height);
+        //  g.drawRect(surroundings3.getRectangle().x, surroundings3.getRectangle().y, surroundings3.getRectangle().width, surroundings3.getRectangle().height);
+        //  g.drawRect(surroundings4.getRectangle().x, surroundings4.getRectangle().y, surroundings4.getRectangle().width, surroundings4.getRectangle().height);
+        //  g.drawRect(surroundings5.getRectangle().x, surroundings5.getRectangle().y, surroundings5.getRectangle().width, surroundings5.getRectangle().height);
+        g.drawRect(anchor.getRectangle().x, anchor.getRectangle().y, anchor.getRectangle().width, anchor.getRectangle().height);
     }
+
+    public void drawPlatforms(Graphics g){
+        levelManager = new LevelManager();
+        levelManager.update();
+        levelManager.draw(g);
+    }
+
+
+
 
     public void updateAnimationTick(){
         animationTick++;
@@ -193,25 +232,47 @@ public class Playing extends State implements Statemethods{
         }
     }
 
+    public void updateEntityCollisions(Player x, MonitoringVillian y, Anchor a){
+        Player myPlayer = x;
+        MonitoringVillian myvillain = y;
+        Anchor myAnchor = a;
 
+        
+        if (myPlayer.getHitBox().intersects(myvillain.getHitBox()) || myPlayer.getHitBox().getMaxY() == myvillain.getHitBox().getY() && myPlayer.getHitBox().getMaxX() >= myvillain.getHitBox().getX() && myPlayer.getHitBox().getX() <= myvillain.getHitBox().getMaxX() || myvillain.getHitBox().getMaxY() == myPlayer.getHitBox().getY() && myvillain.getHitBox().getMaxX() >= myPlayer.getHitBox().getX() && myvillain.getHitBox().getX() <= myPlayer.getHitBox().getMaxX()) {
+            player.playerDies();
+            Gamestate.state = Gamestate.GAMEOVER;
+        }
 
-    public void drawPlatforms(Graphics g){
-        levelManager = new LevelManager();
-        levelManager.update();
-        levelManager.draw(g);
+        if(myPlayer.getHitBox().y >= 700){
+            
+            player.playerDies();
+            Gamestate.state = Gamestate.GAMEOVER;
+        }
+
+        if (myPlayer.getHitBox().intersects(myAnchor.getHitBox()) || myPlayer.getHitBox().getMaxY() == myAnchor.getHitBox().getY() && myPlayer.getHitBox().getMaxX() >= myAnchor.getHitBox().getX() && myPlayer.getHitBox().getX() <= myAnchor.getHitBox().getMaxX() || myAnchor.getHitBox().getMaxY() == myPlayer.getHitBox().getY() && myAnchor.getHitBox().getMaxX() >= myPlayer.getHitBox().getX() && myAnchor.getHitBox().getX() <= myPlayer.getHitBox().getMaxX()) {
+            player.playerDies();
+            Gamestate.state = Gamestate.GAMEWIN;
+        }
+
     }
-    public void setBackGround(Surroundings surroundings1, Surroundings surroundings2, Surroundings surroundings3, Surroundings surroundings4, Surroundings surroundings5, Surroundings surroundings6, Surroundings surroundings7, Surroundings surroundings8){
-        this.surroundings1 = surroundings1;
-        this.surroundings2 = surroundings2;
-        this.surroundings3 = surroundings3;
-        this.surroundings4 = surroundings4;
-        this.surroundings5 = surroundings5;
-        this.surroundings6 = surroundings6;
-        this.surroundings7 = surroundings7;
-        this.surroundings8 = surroundings8;
+
+
+
+
+    public void implementSurroundings(){
+        Surroundings surroundings1 = new Surroundings(collisionWatcher, 0 , 400 , 240, 32);
+        Surroundings surroundings2 = new Surroundings(collisionWatcher, 240, 500,  160, 32);
+        Surroundings surroundings3 = new Surroundings(collisionWatcher, 400, 450,  32, 32);
+        Surroundings surroundings4 = new Surroundings(collisionWatcher, 433, 400,  225, 32);
+        Surroundings surroundings5 = new Surroundings(collisionWatcher, 710, 350,  47, 32);
+        Surroundings surroundings6 = new Surroundings(collisionWatcher, 600, 300,  32, 32); 
+        Surroundings surroundings7 = new Surroundings(collisionWatcher, 530, 280,  32, 32);
+        Surroundings surroundings8 = new Surroundings(collisionWatcher, 420, 230,  60, 32);//creating surroundings and passing collisions
+    }
+
     
-    }
 
+    
     public void addEntity(Entity e){
         entitiesList.add(e);
     }
@@ -220,4 +281,5 @@ public class Playing extends State implements Statemethods{
         return entitiesList.size();
     }
 
+    
 }

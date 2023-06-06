@@ -16,7 +16,7 @@ public class Player implements Entity{
     private int xPosition, yPosition;
     public Rectangle hitBox;
     public Collisions colliderCheck;
-    private int xDifference = 22;
+    private int xDifference = 27;
     private int yDifference = 15;
     private BufferedImage img;
     private BufferedImage[][] animation;
@@ -28,19 +28,23 @@ public class Player implements Entity{
     private boolean moving;
     private boolean jump;
     private int lastPressed = RIGHT;
+    public int gravVal = -14;
+    public int playerSpeed = 1;
 
     private boolean left, up, right, down;
 
     public Player(int x, int y,  Collisions c){
+        //Creates player instance
         xPosition = x;
         yPosition = y;
-        hitBox = new Rectangle(xPosition + xDifference, yPosition + yDifference, 30, 45);
+        hitBox = new Rectangle(xPosition + xDifference, yPosition + yDifference, 20, 45);
         colliderCheck = c;
         colliderCheck.addEntity(this);
         importImage();
         loadAnimation();
     }
 
+    //Loads Animation frames from the atlas to a 2D array of buffered images. 
     public void loadAnimation() {
         animation = new BufferedImage[6][7];
         for(int j = 0; j<animation.length;j++)
@@ -49,6 +53,7 @@ public class Player implements Entity{
             }
     }
 
+    //Imports the Image from file
     public void importImage() {
         try {
             img = ImageIO.read(new FileInputStream("res/diverSpriteAtlas.png"));
@@ -58,6 +63,7 @@ public class Player implements Entity{
         }
     }
 
+    //Getters and Setters
     public void setGravityValue(int g){
         gravityValue = g;
     }
@@ -74,6 +80,7 @@ public class Player implements Entity{
         return inAir;
     }
 
+    //Goes to the next frame of the animation and then back to the first when at the end
     public void updateAnimation(){
         animationIndex++;
         if(animationIndex>= GetSpriteAmount(playerAction))
@@ -81,13 +88,14 @@ public class Player implements Entity{
     }
 
 
+    //Changes the gravity 
     public void updateGravityValue(){
         if(gravityValue != 0){
             int toIncrement = gravityValue/(Math.abs(gravityValue));
             if(right)
-                movePosition(2, 0);
+                movePosition(1, 0);
             else if(left)
-                movePosition(-2, 0);
+                movePosition(-1, 0);
             else
                 movePosition(0, 0);
         for(int i=0; i<Math.abs(gravityValue); i++){
@@ -102,9 +110,10 @@ public class Player implements Entity{
         jump = true;
         if(!inAir){
             inAir = true;
-            gravityValue = -12; //start of gravity vallue
+            gravityValue = gravVal; //start of gravity vallue
         }
     } 
+
 
     public BufferedImage getAnimation(){
         return animation[playerAction][animationIndex];
@@ -124,6 +133,20 @@ public class Player implements Entity{
 
     public void movePosition(int xNum, int yNum){ 
        colliderCheck.moveTo(this, xNum, yNum); // sends the amount the player wants to move which will then update it depending on where it can move
+    }
+
+    //Death 
+    public void playerDies(){
+        xPosition = 0;
+        hitBox.x = xPosition + xDifference;
+        yPosition = 300;
+        hitBox.y = yPosition+ yDifference;
+        //this.setMoving(true);
+        this.setInAir(true);
+        this.setJump(false);
+        right = false;
+        left = false;
+        
     }
 
     public int getXPosition(){
@@ -162,6 +185,8 @@ public class Player implements Entity{
         animationIndex = 0;
     }
 
+
+    //Changes type of animation based if they are jumping and if they are in teh air
     @Override
     public void setAnimation() {
         if(!inAir && jump)
@@ -171,11 +196,11 @@ public class Player implements Entity{
                 switch(playerDirection){
                     case LEFT:
                         playerAction = JUMPING_LEFT;
-                        movePosition(-1, 0);
+                        movePosition(0, 0);
                         break;
                     case RIGHT:
                         playerAction = JUMPING_RIGHT;
-                        movePosition(1, 0);
+                        movePosition(0, 0);
                         break;
                 }
             }
@@ -199,6 +224,7 @@ public class Player implements Entity{
                     break;
             }
     }
+
 
     public void setLeft(boolean bool){
         left = bool;
@@ -232,16 +258,17 @@ public class Player implements Entity{
         return down;
     }
 
+    //Update Position when they are moving. 
     public void updatePos(){
         moving = false;
         if(left && !right){
             moving = true;
-            movePosition(-1, 0);
+            movePosition(-playerSpeed, 0);
             playerDirection = LEFT;
         }
         else if (!left && right){
             moving = true;
-            movePosition(1, 0);
+            movePosition(playerSpeed, 0);
             playerDirection = RIGHT;
         } 
     }

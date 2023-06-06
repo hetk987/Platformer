@@ -1,9 +1,8 @@
 package Physics;
+
 import Entities.*;
 
-
 import java.util.ArrayList;
-
 
 import java.awt.Rectangle;
 
@@ -65,7 +64,8 @@ public class Collisions {
             currentEntity.setInAir(true);  
             currentEntity.setYPosition(futureY);
 
-        }else{
+        }
+        else{
             currentEntity.setInAir(false);
         }
 
@@ -100,6 +100,9 @@ public class Collisions {
             return false;
         return true;
     }
+    
+
+    
 }
 
  

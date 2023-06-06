@@ -1,8 +1,9 @@
 package gamestates;
 
+
 import main.Game;
 
-public class State {
+public class State{
     protected Game game;
 
     public State(Game game){

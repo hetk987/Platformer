@@ -12,6 +12,9 @@ public static final String PLAYER_ATLAS = "diverSpriteAtlas.png";
 public static final String LEVEL_ATLAS = "platformAtlas.png";
 public static final String ANCHOR = "anchor.png";
 public static final String BACKGROUND = "background.png";
+public static final String SHARK = "sharkAnimation.png";
+public static final String ENDING_SCREEN = "gameOver.png";
+public static final String WINNING_SCREEN = "gameWin.png";
 
 
     public static BufferedImage getSpriteAtlas(String fileName){
