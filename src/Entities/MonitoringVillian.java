@@ -2,8 +2,6 @@ package Entities;
 
 import java.awt.Rectangle;
 import Physics.*;
-import utilz.Constants.PlayerConstants;
-
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;

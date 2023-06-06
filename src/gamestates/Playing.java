@@ -5,8 +5,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import javax.swing.JButton;
-
 import Entities.Anchor;
 import Entities.Entity;
 import Entities.MonitoringVillian;
@@ -15,8 +13,6 @@ import Entities.Surroundings;
 import Levels.LevelManager;
 import Physics.Collisions;
 import main.Game;
-import utilz.LoadSave;
-
 import static utilz.Constants.Directions.*;
 
 
@@ -29,7 +25,6 @@ public class Playing extends State implements Statemethods{
     private int gravityTick=0;
     private int gravitySpeed = 5;
 
-    private Entity currentEntity;
     private LevelManager levelManager;
     public Player player;
     public MonitoringVillian villain;

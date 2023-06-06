@@ -1,10 +1,8 @@
 package Physics;
+
 import Entities.*;
-import gamestates.Gamestate;
 
 import java.util.ArrayList;
-
-import org.w3c.dom.css.Rect;
 
 import java.awt.Rectangle;
 

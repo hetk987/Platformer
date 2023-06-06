@@ -4,23 +4,22 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-
-import gamestates.GameOver;
-import gamestates.GameWin;
 import gamestates.Gamestate;
 import gamestates.Menu;
 import gamestates.Playing;
-import utilz.LoadSave;
+import gamestates.GameOver;
+import gamestates.GameWin;
 
 public class Game implements Runnable{
+
+    //Instance fields for Game Loop 
     private GameWindow gameWindow;
     private GamePanel gamePanel;
     private Thread gameThread;
     private final int FPS_SET = 120;
     private final int UPS_SET = 200;
 
+    //Instances of different game states
     public Playing playing;
     private Menu menu;
     private GameOver gameOver;
@@ -28,7 +27,7 @@ public class Game implements Runnable{
     public MenuFrame menuFrame;
     public Settings settings;
 
-
+    //Instances for window size
     public final static int TILE_DEFAULT_SIZE = 32;
     public final static float SCALE = 1.5f;
     public final static int TILES_IN_WIDTH = 26;
@@ -38,9 +37,7 @@ public class Game implements Runnable{
     public final static int GAME_HEIGHT = TILES_SIZE * TILES_IN_HEIGHT;
 
     public Game(){
-
-        
-
+        //Instanciate game states
         gamePanel = new GamePanel(this);
         playing = new Playing(this);
         gameOver = new GameOver(this);
@@ -51,9 +48,13 @@ public class Game implements Runnable{
         gamePanel.setFocusable(true);
         gamePanel.requestFocus(true);
         
+        //Creates a menu JFrame and shows it
         menuFrame = new MenuFrame();
         menuFrame.setVisibility(true);
        
+
+        //Listens for Play Button being pressed 
+        //Changes the Frame from Menu to Playing Screen
         ActionListener press = new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 if(e.getSource()==menuFrame.playBtn){
@@ -67,9 +68,9 @@ public class Game implements Runnable{
         };
 
 
+        //Listens for Back Button being pressed 
+        //Changes the Frame from Playing to Menu Screen
         menuFrame.playBtn.addActionListener(press);
-
-
         ActionListener back = new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 if(e.getSource() == gamePanel.backbtn){
@@ -83,8 +84,9 @@ public class Game implements Runnable{
         };
 
 
+        //Listens for Back Button being pressed 
+        //Changes the Frame from Setting to Menu Screen
         gamePanel.backbtn.addActionListener(back);
-
         ActionListener gotoSettings = new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 if(e.getSource() == menuFrame.settingsBtn){
@@ -95,10 +97,9 @@ public class Game implements Runnable{
             }
         };
 
+        //Listens for Setting Button being pressed 
+        //Changes the Frame from Menu to Setting Screen
         menuFrame.settingsBtn.addActionListener(gotoSettings);
-
-
-
         settings = new Settings(this);
         ActionListener back2 = new ActionListener(){
             public void actionPerformed(ActionEvent e){
@@ -112,11 +113,11 @@ public class Game implements Runnable{
         };
 
         settings.btn.addActionListener(back2);
-
-
         StartGameLoop();
     }
 
+
+    //Game Loop that runs on a different Thread
     @Override
     public void run() {
         //time per frame in nanoseconds
@@ -149,6 +150,7 @@ public class Game implements Runnable{
         }
     }
 
+    //Updating information in the backgorund 
     private void update() {
 
         switch(Gamestate.state){
@@ -156,13 +158,16 @@ public class Game implements Runnable{
             menu.update();
                 break;
             case PLAYING:
-             playing.update();
+            playing.update();
                 break;
+            case PAUSE:
+            
             default:
                 break;
         }
     }
 
+    //Drawing anything on Screan
     public void render(Graphics g){
         
         switch(Gamestate.state){

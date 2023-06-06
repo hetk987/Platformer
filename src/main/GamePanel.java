@@ -8,21 +8,17 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.plaf.basic.BasicButtonUI;
 
-import gamestates.Gamestate;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.event.KeyEvent;
 import java.awt.geom.RoundRectangle2D;
 
 import static main.Game.GAME_WIDTH;
 import static main.Game.GAME_HEIGHT;
 import inputs.KeyBoardInputs;
-import utilz.LoadSave;
 
 public class GamePanel extends JPanel{
 

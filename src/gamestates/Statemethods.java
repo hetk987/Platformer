@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 
 
 public interface Statemethods {
+    // Methods needed in all game states
     public void update();
     public void draw(Graphics g);
     public void mouseClicked(MouseEvent e);

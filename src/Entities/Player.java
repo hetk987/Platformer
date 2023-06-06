@@ -34,6 +34,7 @@ public class Player implements Entity{
     private boolean left, up, right, down;
 
     public Player(int x, int y,  Collisions c){
+        //Creates player instance
         xPosition = x;
         yPosition = y;
         hitBox = new Rectangle(xPosition + xDifference, yPosition + yDifference, 20, 45);
@@ -43,6 +44,7 @@ public class Player implements Entity{
         loadAnimation();
     }
 
+    //Loads Animation frames from the atlas to a 2D array of buffered images. 
     public void loadAnimation() {
         animation = new BufferedImage[6][7];
         for(int j = 0; j<animation.length;j++)
@@ -51,6 +53,7 @@ public class Player implements Entity{
             }
     }
 
+    //Imports the Image from file
     public void importImage() {
         try {
             img = ImageIO.read(new FileInputStream("res/diverSpriteAtlas.png"));
@@ -60,6 +63,7 @@ public class Player implements Entity{
         }
     }
 
+    //Getters and Setters
     public void setGravityValue(int g){
         gravityValue = g;
     }
@@ -76,6 +80,7 @@ public class Player implements Entity{
         return inAir;
     }
 
+    //Goes to the next frame of the animation and then back to the first when at the end
     public void updateAnimation(){
         animationIndex++;
         if(animationIndex>= GetSpriteAmount(playerAction))
@@ -83,6 +88,7 @@ public class Player implements Entity{
     }
 
 
+    //Changes the gravity 
     public void updateGravityValue(){
         if(gravityValue != 0){
             int toIncrement = gravityValue/(Math.abs(gravityValue));
@@ -108,6 +114,7 @@ public class Player implements Entity{
         }
     } 
 
+
     public BufferedImage getAnimation(){
         return animation[playerAction][animationIndex];
     }
@@ -128,6 +135,7 @@ public class Player implements Entity{
        colliderCheck.moveTo(this, xNum, yNum); // sends the amount the player wants to move which will then update it depending on where it can move
     }
 
+    //Death 
     public void playerDies(){
         xPosition = 0;
         hitBox.x = xPosition + xDifference;
@@ -177,6 +185,8 @@ public class Player implements Entity{
         animationIndex = 0;
     }
 
+
+    //Changes type of animation based if they are jumping and if they are in teh air
     @Override
     public void setAnimation() {
         if(!inAir && jump)
@@ -215,6 +225,7 @@ public class Player implements Entity{
             }
     }
 
+
     public void setLeft(boolean bool){
         left = bool;
     }
@@ -247,6 +258,7 @@ public class Player implements Entity{
         return down;
     }
 
+    //Update Position when they are moving. 
     public void updatePos(){
         moving = false;
         if(left && !right){

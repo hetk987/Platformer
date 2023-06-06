@@ -8,15 +8,12 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.TextField;
 import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.AbstractButton;
-import javax.swing.BoxLayout;
 import javax.swing.ButtonModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -26,13 +23,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicButtonUI;
 
 
 public class MenuFrame extends JFrame {
-    private JPanel panel;
     public JButton playBtn;
     public JButton settingsBtn;
     public JTextField nameField;
